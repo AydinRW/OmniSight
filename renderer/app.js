@@ -153,6 +153,22 @@
 
     window.addEventListener('resize', debounce(() => renderer.refresh(), 120));
 
+    if (window.location.hash === '#smoke') {
+      try {
+        await store.putItems([{
+          id: 'smoke-fixture',
+          name: '单日测试',
+          notes: '',
+          color: '#3b82f6',
+          start: '2026-02-01',
+          end: '2026-02-01',
+          seriesId: null
+        }]);
+      } catch (err) {
+        console.error('SMOKE_FIXTURE_ERROR ' + (err && err.message ? err.message : String(err)));
+      }
+    }
+
     await loadYear();
     console.log('APP_READY year=' + state.year + ' items=' + state.data.items.length);
 
@@ -195,6 +211,10 @@
       console.log('SMOKE_LAYOUT header=' + headerCells + ' rowCells=' + rowCells
         + ' scrollW=' + sb.scrollWidth + ' clientW=' + sb.clientWidth
         + ' hasHScroll=' + (sb.scrollWidth > sb.clientWidth));
+
+      const singleBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-fixture') === 0);
+      const barText = singleBar ? singleBar.querySelector('.bar-text') : null;
+      console.log('SMOKE_SINGLE_BAR_TEXT ' + (barText && barText.textContent === '单日测试' ? 'ok' : 'FAIL(text=' + (barText ? barText.textContent : 'none') + ')'));
 
       const cell = document.querySelector('.cell.valid[data-date="2026-01-01"]');
       if (!cell) {

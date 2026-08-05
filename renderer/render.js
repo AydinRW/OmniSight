@@ -14,7 +14,9 @@
   const MIN_ROW_HEIGHT = DATE_AREA + 3 * BAR_SLOT + 4; // 70
   const LABEL_WIDTH = 64;
   const HEADER_HEIGHT = 26;
-  const TEXT_MIN_WIDTH = 60;
+  // 横条宽度达到该值才显示名称文字：单日横条宽度约 20~46px，
+  // 只要空间能容纳至少一个字符就显示（不足则截断为省略号）。
+  const TEXT_MIN_WIDTH = 20;
 
   // 每个月份行内，把与行有交集的事项条分配到“泳道”（垂直槽位）：
   // 按 (开始日期, id) 顺序贪心分配最低可用泳道；不重叠的事项可复用同一泳道，

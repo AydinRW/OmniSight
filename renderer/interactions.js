@@ -17,6 +17,7 @@
     const u = opts.utils;
     const onDataChanged = opts.onDataChanged || function () {};
     const onDraftsChange = opts.onDraftsChange || function () {};
+    const onCommitDrafts = opts.onCommitDrafts || function () {};
     const onError = opts.onError || function (err) { console.error(err); };
     const scrollBody = renderer.scrollBody;
 
@@ -162,7 +163,12 @@
       const barEl = e.target.closest('.bar');
       if (!barEl) return;
       const bar = renderer.barData.get(barEl.dataset.barKey);
-      if (!bar || bar.draft || bar.preview) return;
+      if (!bar || bar.preview) return;
+      if (bar.draft) {
+        // 双击虚线草稿条 = 点击侧边【添加】按钮，直接弹出新建日程弹窗。
+        onCommitDrafts();
+        return;
+      }
       openEditFlow(bar.item);
     });
 

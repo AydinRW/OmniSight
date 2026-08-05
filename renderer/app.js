@@ -76,7 +76,7 @@
       loadYear();
     });
 
-    addBtn.addEventListener('click', async () => {
+    async function commitDrafts() {
       if (!state.drafts.length) return;
       const res = await dialogs.openAddDialog(state.drafts.length);
       if (!res) return;
@@ -96,7 +96,9 @@
       } catch (err) {
         notifyError(err);
       }
-    });
+    }
+
+    addBtn.addEventListener('click', commitDrafts);
 
     newBtn.addEventListener('click', async () => {
       const today = u.todayISO();
@@ -148,6 +150,7 @@
       utils: u,
       onDataChanged,
       onDraftsChange: updateAddBtn,
+      onCommitDrafts: commitDrafts,
       onError: notifyError
     });
 
@@ -260,6 +263,23 @@
       clickXY(freshCell, upperX, freshRect.top + 55, { pointerId: 4 });
       bars = document.querySelectorAll('.bar.draft');
       console.log('SMOKE_LOWER_CLICK_KEEP ' + (bars.length === 1 ? 'ok' : 'FAIL(' + bars.length + ')'));
+
+      // 双击草稿条应直接弹出【添加事项】弹窗；取消后草稿保留。
+      const draftBar = document.querySelector('.bar.draft');
+      if (draftBar) {
+        const dr = draftBar.getBoundingClientRect();
+        draftBar.dispatchEvent(new MouseEvent('dblclick', {
+          bubbles: true,
+          clientX: dr.left + dr.width / 2,
+          clientY: dr.top + dr.height / 2
+        }));
+      }
+      const modal = document.querySelector('.modal-overlay');
+      console.log('SMOKE_DBLCLICK_DRAFT_DIALOG ' + (modal && modal.textContent.indexOf('添加事项') >= 0 ? 'ok' : 'FAIL(no-modal)'));
+      const cancelBtn = modal ? modal.querySelector('[data-act="cancel"]') : null;
+      if (cancelBtn) cancelBtn.click();
+      bars = document.querySelectorAll('.bar.draft');
+      console.log('SMOKE_DRAFT_KEEP_AFTER_CANCEL ' + (bars.length === 1 ? 'ok' : 'FAIL(' + bars.length + ')'));
 
       const cell2 = document.querySelector('.cell.valid[data-date="2026-01-03"]');
       clickAt(cell2, { pointerId: 2, ctrlKey: true });

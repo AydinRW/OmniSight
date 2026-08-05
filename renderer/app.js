@@ -139,7 +139,7 @@
 
     try {
       const dir = await store.getDataDir();
-      dataDirEl.textContent = '数据目录：\n' + dir;
+      dataDirEl.textContent = '数据目录：' + dir;
     } catch (_) { /* ignore */ }
 
     window.CalendarInteractions.init({
@@ -214,6 +214,7 @@
       console.log('SMOKE_LAYOUT header=' + headerCells + ' rowCells=' + rowCells
         + ' scrollW=' + sb.scrollWidth + ' clientW=' + sb.clientWidth
         + ' hasHScroll=' + (sb.scrollWidth > sb.clientWidth));
+      console.log('SMOKE_LAYOUT_TOPBAR ' + (document.getElementById('sidebar') === null && document.querySelector('#topbar #add-btn') && document.querySelector('#topbar #new-item-btn') ? 'ok' : 'FAIL'));
 
       const singleBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-fixture') === 0);
       const barText = singleBar ? singleBar.querySelector('.bar-text') : null;

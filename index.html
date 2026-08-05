@@ -13,16 +13,19 @@
         <span id="year-label">2026</span>
         <button id="next-year" class="btn" title="下一年">▶</button>
       </div>
+      <div class="action-buttons">
+        <button id="add-btn" class="btn primary" disabled>添加</button>
+        <button id="new-item-btn" class="btn">新建事项</button>
+      </div>
+      <div class="topbar-spacer"></div>
       <div class="app-title">全局视野 · 线性日历</div>
     </div>
     <div id="main">
-      <aside id="sidebar">
-        <button id="add-btn" class="btn primary wide" disabled>添加</button>
-        <button id="new-item-btn" class="btn wide">新建事项</button>
-        <div class="sidebar-hint">拖拽可绘制事项；Ctrl+单击多选；Esc 取消草稿；双击编辑；右键删除。</div>
-        <div id="data-dir" class="data-dir"></div>
-      </aside>
       <div id="scroll-body"></div>
+    </div>
+    <div id="statusbar">
+      <span class="statusbar-hint">拖拽可绘制事项；Ctrl+单击多选；Esc 取消草稿；双击编辑；右键删除。</span>
+      <span id="data-dir" class="data-dir"></span>
     </div>
   </div>
   <script src="renderer/date-utils.js"></script>

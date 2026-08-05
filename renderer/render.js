@@ -16,7 +16,10 @@
   const HEADER_HEIGHT = 26;
   const TEXT_MIN_WIDTH = 60;
 
-  // 每个月份行内，按 (开始日期, id) 排序分配槽位；跨格/跨月的条在同一行内保持同一槽位。
+  // 每个月份行内，把与行有交集的事项条分配到“泳道”（垂直槽位）：
+  // 按 (开始日期, id) 顺序贪心分配最低可用泳道；不重叠的事项可复用同一泳道，
+  // 因此不同日期的单日事项都从第 1 格开始堆叠，不会互相抬高月份行。
+  // 同一事项条在所有覆盖的格子里保持同一泳道，保证跨天条视觉连续。
   function assignSlots(bars, rowStartISO, rowEndISO) {
     const intersecting = bars
       .filter((b) => b.start <= rowEndISO && b.end >= rowStartISO)
@@ -27,7 +30,23 @@
         return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
       });
     const slots = new Map();
-    intersecting.forEach((b, i) => slots.set(b.id, i));
+    const laneEnds = []; // 每条泳道最近一次占用事件的结束日期（ISO 字符串可直接比较）
+    for (const b of intersecting) {
+      let lane = -1;
+      for (let i = 0; i < laneEnds.length; i++) {
+        if (laneEnds[i] < b.start) {
+          lane = i;
+          break;
+        }
+      }
+      if (lane < 0) {
+        lane = laneEnds.length;
+        laneEnds.push(b.end);
+      } else {
+        laneEnds[lane] = b.end;
+      }
+      slots.set(b.id, lane);
+    }
     return slots;
   }
 

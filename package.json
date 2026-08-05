@@ -1,0 +1,40 @@
+{
+  "name": "omnisight",
+  "productName": "全局视野",
+  "version": "1.0.0",
+  "description": "OmniSight 全局视野：Windows 线性年历桌面应用，一年一页、跨天事项、周期事项、本地存储",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/",
+    "build": "electron-builder --win portable"
+  },
+  "author": "OmniSight",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^37.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.omnisight.app",
+    "productName": "全局视野",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "styles.css",
+      "renderer/**/*",
+      "assets/**/*"
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        "portable"
+      ],
+      "signAndEditExecutable": false
+    }
+  }
+}

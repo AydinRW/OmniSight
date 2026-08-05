@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>全局视野</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <div id="topbar">
+      <div class="year-switcher">
+        <button id="prev-year" class="btn" title="上一年">◀</button>
+        <span id="year-label">2026</span>
+        <button id="next-year" class="btn" title="下一年">▶</button>
+      </div>
+      <div class="app-title">全局视野 · 线性日历</div>
+    </div>
+    <div id="main">
+      <aside id="sidebar">
+        <button id="add-btn" class="btn primary wide" disabled>添加</button>
+        <button id="new-item-btn" class="btn wide">新建事项</button>
+        <div class="sidebar-hint">拖拽可绘制事项；Ctrl+单击多选；Esc 取消草稿；双击编辑；右键删除。</div>
+        <div id="data-dir" class="data-dir"></div>
+      </aside>
+      <div id="scroll-body"></div>
+    </div>
+  </div>
+  <script src="renderer/date-utils.js"></script>
+  <script src="renderer/store.js"></script>
+  <script src="renderer/render.js"></script>
+  <script src="renderer/dialogs.js"></script>
+  <script src="renderer/interactions.js"></script>
+  <script src="renderer/app.js"></script>
+</body>
+</html>

@@ -215,6 +215,32 @@
       let bars = document.querySelectorAll('.bar.draft');
       console.log('SMOKE_CLICK_DRAFT ' + (bars.length === 1 ? 'ok' : 'FAIL(' + bars.length + ')' + (bars[0] ? ' class=' + bars[0].className : '')));
 
+      const clickXY = (el, x, y, opts) => {
+        const o = Object.assign({ bubbles: true, button: 0, clientX: x, clientY: y }, opts || {});
+        el.dispatchEvent(new PointerEvent('pointerdown', o));
+        el.dispatchEvent(new PointerEvent('pointerup', o));
+        el.dispatchEvent(new MouseEvent('click', o));
+      };
+
+      // 先清空草稿：点击一个灰色无效格
+      const invalidCell = document.querySelector('.cell.invalid');
+      const iv = invalidCell.getBoundingClientRect();
+      invalidCell.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: iv.left + 4, clientY: iv.top + 4 }));
+      bars = document.querySelectorAll('.bar.draft');
+      console.log('SMOKE_CLEAR_BY_INVALID ' + (bars.length === 0 ? 'ok' : 'FAIL(' + bars.length + ')'));
+
+      // 复现修复的 bug：点击无草稿的新格子上方（草稿条渲染位置），草稿必须保留。
+      const freshCell = document.querySelector('.cell.valid[data-date="2026-01-02"]');
+      const freshRect = freshCell.getBoundingClientRect();
+      const upperX = freshRect.left + freshRect.width / 2;
+      clickXY(freshCell, upperX, freshRect.top + 25, { pointerId: 3 });
+      bars = document.querySelectorAll('.bar.draft');
+      console.log('SMOKE_UPPER_CLICK_KEEP ' + (bars.length === 1 ? 'ok' : 'FAIL(' + bars.length + ')'));
+
+      clickXY(freshCell, upperX, freshRect.top + 55, { pointerId: 4 });
+      bars = document.querySelectorAll('.bar.draft');
+      console.log('SMOKE_LOWER_CLICK_KEEP ' + (bars.length === 1 ? 'ok' : 'FAIL(' + bars.length + ')'));
+
       const cell2 = document.querySelector('.cell.valid[data-date="2026-01-03"]');
       clickAt(cell2, { pointerId: 2, ctrlKey: true });
       bars = document.querySelectorAll('.bar.draft');

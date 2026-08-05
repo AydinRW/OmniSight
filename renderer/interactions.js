@@ -150,6 +150,10 @@
         suppressClear = false;
         return;
       }
+      // 草稿条可能恰好渲染在鼠标下方，导致 click 目标被解析为容器元素；
+      // 这里用坐标判断是否落在有效日期格内，落在格内一律不清空草稿。
+      const hit = renderer.pointToCell(e.clientX, e.clientY);
+      if (hit && hit.valid) return;
       if (e.target.closest('.cell.valid') || e.target.closest('.bar')) return;
       clearDrafts();
     });

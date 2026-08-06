@@ -217,10 +217,11 @@
       console.log('SMOKE_LAYOUT_TOPBAR ' + (document.getElementById('sidebar') === null && document.querySelector('#topbar #add-btn') && document.querySelector('#topbar #new-item-btn') ? 'ok' : 'FAIL'));
       const hcStyle = getComputedStyle(document.querySelector('.header-cell'));
       const mlStyle = getComputedStyle(document.querySelector('.month-label'));
-      const bg = 'rgb(245, 245, 244)';
-      const okHeader = hcStyle.borderTopLeftRadius === '0px' && hcStyle.borderRightWidth === '0px' && hcStyle.backgroundColor === bg;
+      const bg = 'rgb(248, 244, 234)'; // #f8f4ea 奶油底
+      const okHeader = hcStyle.borderTopLeftRadius === '0px' && hcStyle.borderRightWidth === '0px'
+        && hcStyle.backgroundColor === bg && hcStyle.color === 'rgb(0, 0, 0)';
       const okLabel = mlStyle.borderTopLeftRadius === '0px' && mlStyle.borderRightWidth === '0px'
-        && mlStyle.borderBottomWidth === '0px' && mlStyle.backgroundColor === bg;
+        && mlStyle.borderBottomWidth === '0px' && mlStyle.backgroundColor === bg && mlStyle.color === 'rgb(0, 0, 0)';
       const cornerCell = getComputedStyle(document.querySelector('.grid-header + .month-row .cell:nth-child(2)'));
       const okCorners = cornerCell.borderTopLeftRadius === '10px' && cornerCell.borderTopRightRadius === '10px';
       const innerCell = getComputedStyle(document.querySelectorAll('.month-row')[1].querySelectorAll('.cell')[5]);
@@ -228,7 +229,12 @@
       const lastCol = getComputedStyle(document.querySelector('.month-row .cell:last-child'));
       const lastRow = getComputedStyle(document.querySelector('.month-row:last-child .cell'));
       const okBorders = lastCol.borderRightWidth === '0px' && lastRow.borderBottomWidth === '0px';
-      console.log('SMOKE_STYLE_V2 ' + (okHeader && okLabel && okCorners && okInner && okBorders ? 'ok' : 'FAIL'));
+      const dateCell = getComputedStyle(document.querySelector('.cell.valid'));
+      const okDateText = dateCell.color === 'rgb(85, 85, 85)'; // 日期数字深灰
+      const janRow = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(2) > .row-grid'));
+      const febRow = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(3) > .row-grid'));
+      const okMonthBgs = janRow.backgroundColor === 'rgb(244, 239, 228)' && febRow.backgroundColor === 'rgb(242, 238, 231)';
+      console.log('SMOKE_STYLE_V2 ' + (okHeader && okLabel && okCorners && okInner && okBorders && okDateText && okMonthBgs ? 'ok' : 'FAIL'));
 
       const singleBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-fixture') === 0);
       const barText = singleBar ? singleBar.querySelector('.bar-text') : null;
@@ -278,6 +284,8 @@
       clickXY(freshCell, upperX, freshRect.top + 55, { pointerId: 4 });
       bars = document.querySelectorAll('.bar.draft');
       console.log('SMOKE_LOWER_CLICK_KEEP ' + (bars.length === 1 ? 'ok' : 'FAIL(' + bars.length + ')'));
+      const dbStyle = bars[0] ? getComputedStyle(bars[0]) : null;
+      console.log('SMOKE_DRAFT_PURPLE ' + (dbStyle && dbStyle.borderTopColor === 'rgb(107, 91, 149)' && dbStyle.backgroundColor === 'rgba(107, 91, 149, 0.2)' ? 'ok' : 'FAIL'));
 
       // 双击草稿条应直接弹出【添加事项】弹窗；取消后草稿保留。
       const draftBar = document.querySelector('.bar.draft');

@@ -217,7 +217,7 @@
       console.log('SMOKE_LAYOUT_TOPBAR ' + (document.getElementById('sidebar') === null && document.querySelector('#topbar #add-btn') && document.querySelector('#topbar #new-item-btn') ? 'ok' : 'FAIL'));
       const hcStyle = getComputedStyle(document.querySelector('.header-cell'));
       const mlStyle = getComputedStyle(document.querySelector('.month-label'));
-      const bg = 'rgb(248, 244, 234)'; // #f8f4ea 奶油底
+      const bg = 'rgb(247, 244, 237)'; // #f7f4ed 页面底色
       const okHeader = hcStyle.borderTopLeftRadius === '0px' && hcStyle.borderRightWidth === '0px'
         && hcStyle.backgroundColor === bg && hcStyle.color === 'rgb(0, 0, 0)';
       const okLabel = mlStyle.borderTopLeftRadius === '0px' && mlStyle.borderRightWidth === '0px'
@@ -233,7 +233,14 @@
       const okDateText = dateCell.color === 'rgb(85, 85, 85)'; // 日期数字深灰
       const janRow = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(2) > .row-grid'));
       const febRow = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(3) > .row-grid'));
-      const okMonthBgs = janRow.backgroundColor === 'rgb(244, 239, 228)' && febRow.backgroundColor === 'rgb(242, 238, 231)';
+      const aprRow = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(5) > .row-grid'));
+      const julRow = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(8) > .row-grid'));
+      const octRow = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(11) > .row-grid'));
+      const q1 = 'rgb(237, 232, 235)'; // #ede8eb 浅灰紫
+      const okMonthBgs = janRow.backgroundColor === q1 && febRow.backgroundColor === q1
+        && aprRow.backgroundColor === 'rgb(243, 242, 232)' // #f3f2e8 浅米奶白
+        && julRow.backgroundColor === 'rgb(230, 242, 241)' // #e6f2f1 浅薄荷青
+        && octRow.backgroundColor === 'rgb(244, 232, 237)'; // #f4e8ed 浅柔粉
       console.log('SMOKE_STYLE_V2 ' + (okHeader && okLabel && okCorners && okInner && okBorders && okDateText && okMonthBgs ? 'ok' : 'FAIL'));
 
       const singleBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-fixture') === 0);

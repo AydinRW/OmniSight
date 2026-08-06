@@ -4,7 +4,7 @@ body {
   font-family: "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", sans-serif;
   font-size: 13px;
   color: #1f2937;
-  background: #f8f4ea;
+  background: #f7f4ed;
   overflow: hidden;
 }
 #app { display: flex; flex-direction: column; height: 100vh; }
@@ -14,7 +14,7 @@ body {
   gap: 12px;
   height: 48px;
   padding: 0 12px;
-  background: #f8f4ea;
+  background: #f7f4ed;
   flex: 0 0 auto;
 }
 .year-switcher { display: flex; align-items: center; gap: 8px; }
@@ -37,7 +37,7 @@ body {
 .btn.danger-bg { background: #dc2626; border-color: #dc2626; color: #fff; }
 .btn.danger-bg:hover { background: #b91c1c; }
 #main { display: flex; flex: 1 1 auto; min-height: 0; }
-#scroll-body { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; min-width: 0; background: #f8f4ea; position: relative; }
+#scroll-body { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; min-width: 0; background: #f7f4ed; position: relative; }
 #statusbar {
   height: 26px;
   flex: 0 0 auto;
@@ -48,7 +48,7 @@ body {
   padding: 0 12px;
   font-size: 11px;
   color: #9ca3af;
-  background: #f8f4ea;
+  background: #f7f4ed;
 }
 .statusbar-hint { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .data-dir { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45%; }
@@ -57,7 +57,7 @@ body {
   top: 0;
   z-index: 10;
   display: flex;
-  background: #f8f4ea;
+  background: #f7f4ed;
 }
 .header-grid { display: grid; }
 .header-cell {
@@ -65,7 +65,7 @@ body {
   font-size: 11px;
   color: #000;
   text-align: center;
-  background: #f8f4ea;
+  background: #f7f4ed;
   overflow: hidden;
 }
 .month-row { display: flex; width: max-content; align-items: stretch; }
@@ -78,25 +78,25 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8f4ea;
+  background: #f7f4ed;
   color: #000;
   font-weight: 700;
   font-size: 13px;
 }
 .row-grid { position: relative; display: grid; grid-auto-rows: 1fr; }
-/* 十二个月份行各自的极淡低饱和底色（相邻月份微弱区分） */
-#scroll-body > .month-row:nth-child(2) > .row-grid { background: #f4efe4; }
-#scroll-body > .month-row:nth-child(3) > .row-grid { background: #f2eee7; }
-#scroll-body > .month-row:nth-child(4) > .row-grid { background: #eef0e8; }
-#scroll-body > .month-row:nth-child(5) > .row-grid { background: #ecf0e8; }
-#scroll-body > .month-row:nth-child(6) > .row-grid { background: #e9f0ea; }
-#scroll-body > .month-row:nth-child(7) > .row-grid { background: #e7f0ed; }
-#scroll-body > .month-row:nth-child(8) > .row-grid { background: #e6eff0; }
-#scroll-body > .month-row:nth-child(9) > .row-grid { background: #e7edf0; }
-#scroll-body > .month-row:nth-child(10) > .row-grid { background: #e9ebf0; }
-#scroll-body > .month-row:nth-child(11) > .row-grid { background: #eeebee; }
-#scroll-body > .month-row:nth-child(12) > .row-grid { background: #f2ebe8; }
-#scroll-body > .month-row:nth-child(13) > .row-grid { background: #f5efe3; }
+/* 月份行底色按季度分组：1-3月浅灰紫、4-6月浅米奶白、7-9月浅薄荷青、10-12月浅柔粉 */
+#scroll-body > .month-row:nth-child(2) > .row-grid { background: #ede8eb; }
+#scroll-body > .month-row:nth-child(3) > .row-grid { background: #ede8eb; }
+#scroll-body > .month-row:nth-child(4) > .row-grid { background: #ede8eb; }
+#scroll-body > .month-row:nth-child(5) > .row-grid { background: #f3f2e8; }
+#scroll-body > .month-row:nth-child(6) > .row-grid { background: #f3f2e8; }
+#scroll-body > .month-row:nth-child(7) > .row-grid { background: #f3f2e8; }
+#scroll-body > .month-row:nth-child(8) > .row-grid { background: #e6f2f1; }
+#scroll-body > .month-row:nth-child(9) > .row-grid { background: #e6f2f1; }
+#scroll-body > .month-row:nth-child(10) > .row-grid { background: #e6f2f1; }
+#scroll-body > .month-row:nth-child(11) > .row-grid { background: #f4e8ed; }
+#scroll-body > .month-row:nth-child(12) > .row-grid { background: #f4e8ed; }
+#scroll-body > .month-row:nth-child(13) > .row-grid { background: #f4e8ed; }
 .cell {
   border-right: 1px solid #e4dfd2;
   border-bottom: 1px solid #e4dfd2;

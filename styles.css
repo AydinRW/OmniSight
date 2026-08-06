@@ -41,9 +41,9 @@ body {
   font-weight: 700;
 }
 .btn:hover { background: #8b4f43; }
-.btn.primary { background: #3a5a40; }
-.btn.primary:hover { background: #2f4a34; }
-.btn.primary:disabled { background: #648c69; color: #f9f2dd; cursor: not-allowed; }
+.btn.primary { background: #648c69; }
+.btn.primary:hover { background: #57805c; }
+.btn.primary:disabled { background: #3a5a40; color: #f9f2dd; cursor: not-allowed; }
 .btn.danger-bg { background: #9c5b4e; }
 .btn.danger-bg:hover { background: #8b4f43; }
 #main { display: flex; flex: 1 1 auto; min-height: 0; }

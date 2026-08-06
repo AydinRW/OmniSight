@@ -285,7 +285,7 @@
       const btnStyle = getComputedStyle(document.querySelector('#new-item-btn'));
       const okButtons = btnStyle.backgroundColor === 'rgb(156, 91, 78)' && btnStyle.color === bg && btnStyle.fontWeight === '700';
       const addDisabled = getComputedStyle(document.querySelector('#add-btn'));
-      const okAddDisabled = addDisabled.backgroundColor === 'rgb(100, 140, 105)' && addDisabled.color === bg; // #648c69
+      const okAddDisabled = addDisabled.backgroundColor === 'rgb(58, 90, 64)' && addDisabled.color === bg; // #3a5a40
       const sub = document.querySelector('.app-subtitle');
       const okSub = !!sub && sub.textContent === 'by Aydin' && getComputedStyle(sub).textAlign === 'right';
       const fontOk = getComputedStyle(document.body).fontFamily.indexOf('YaHei') >= 0;
@@ -343,7 +343,7 @@
       bars = document.querySelectorAll('.bar.draft');
       console.log('SMOKE_LOWER_CLICK_KEEP ' + (bars.length === 1 ? 'ok' : 'FAIL(' + bars.length + ')'));
       const addEnabled = getComputedStyle(document.querySelector('#add-btn'));
-      console.log('SMOKE_BUTTONS_ADD ' + (addEnabled.backgroundColor === 'rgb(58, 90, 64)' && addEnabled.color === 'rgb(249, 242, 221)' && addEnabled.fontWeight === '700' ? 'ok' : 'FAIL'));
+      console.log('SMOKE_BUTTONS_ADD ' + (addEnabled.backgroundColor === 'rgb(100, 140, 105)' && addEnabled.color === 'rgb(249, 242, 221)' && addEnabled.fontWeight === '700' ? 'ok' : 'FAIL'));
       const dbStyle = bars[0] ? getComputedStyle(bars[0]) : null;
       console.log('SMOKE_DRAFT_COLOR ' + (dbStyle && dbStyle.borderTopColor === 'rgb(156, 91, 78)' && dbStyle.backgroundColor === 'rgba(156, 91, 78, 0.16)' ? 'ok' : 'FAIL'));
 

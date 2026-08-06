@@ -265,7 +265,7 @@ function createWindow() {
     height: 900,
     minWidth: 1000,
     minHeight: 640,
-    title: '全局视野',
+    title: 'OmniSight',
     backgroundColor: '#f5f5f4',
     icon: path.join(__dirname, 'assets', 'icon.png'),
     autoHideMenuBar: true,

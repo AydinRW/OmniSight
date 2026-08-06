@@ -71,6 +71,16 @@
       };
     }
 
+    // 批量选择模式：单击事项横条切换选中状态。
+    function toggleSelect(barEl) {
+      const bar = renderer.barData.get(barEl.dataset.barKey);
+      if (!bar || !bar.item || bar.draft || bar.preview) return;
+      const id = bar.item.id;
+      if (state.batch.ids.has(id)) state.batch.ids.delete(id);
+      else state.batch.ids.add(id);
+      updateBars();
+    }
+
     function onPointerMove(e) {
       if (!drag) return;
       if (drag.mode === 'draw') {
@@ -135,7 +145,7 @@
       suppressClear = false;
       const barEl = e.target.closest('.bar');
       if (barEl) {
-        startMove(e, barEl);
+        if (!(state.batch && state.batch.active)) startMove(e, barEl);
         if (drag) attachDragListeners();
         return;
       }
@@ -151,6 +161,13 @@
         suppressClear = false;
         return;
       }
+      if (state.batch && state.batch.active) {
+        const barEl = e.target.closest('.bar');
+        if (barEl) {
+          toggleSelect(barEl);
+          return;
+        }
+      }
       // 草稿条可能恰好渲染在鼠标下方，导致 click 目标被解析为容器元素；
       // 这里用坐标判断是否落在有效日期格内，落在格内一律不清空草稿。
       const hit = renderer.pointToCell(e.clientX, e.clientY);
@@ -160,6 +177,7 @@
     });
 
     scrollBody.addEventListener('dblclick', (e) => {
+      if (state.batch && state.batch.active) return;
       const barEl = e.target.closest('.bar');
       if (!barEl) return;
       const bar = renderer.barData.get(barEl.dataset.barKey);
@@ -173,6 +191,7 @@
     });
 
     scrollBody.addEventListener('contextmenu', (e) => {
+      if (state.batch && state.batch.active) return;
       const barEl = e.target.closest('.bar');
       if (!barEl) return;
       e.preventDefault();

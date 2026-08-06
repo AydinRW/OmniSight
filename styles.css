@@ -43,7 +43,7 @@ body {
 .btn:hover { background: #8b4f43; }
 .btn.primary { background: #3a5a40; }
 .btn.primary:hover { background: #2f4a34; }
-.btn.primary:disabled { background: #c8c3b5; color: #f9f2dd; cursor: not-allowed; }
+.btn.primary:disabled { background: #648c69; color: #f9f2dd; cursor: not-allowed; }
 .btn.danger-bg { background: #9c5b4e; }
 .btn.danger-bg:hover { background: #8b4f43; }
 #main { display: flex; flex: 1 1 auto; min-height: 0; }
@@ -150,7 +150,9 @@ body {
 .bar:hover { filter: brightness(0.94); }
 .bar.draft { background: rgba(156, 91, 78, 0.16) !important; border: 1px dashed #9c5b4e; color: #6e3d33; cursor: default; }
 .bar.preview { opacity: 0.8; border: 1px dashed #111827; }
+.bar.selected { opacity: 0.8; border: 1px dashed #111827; }
 .bar-text { display: inline-block; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.action-buttons[hidden] { display: none; }
 .modal-overlay {
   position: fixed;
   inset: 0;

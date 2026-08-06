@@ -29,7 +29,8 @@
       year: new Date().getFullYear(),
       data: { items: [], series: [] },
       drafts: [],
-      moving: null
+      moving: null,
+      batch: { active: false, ids: new Set() }
     };
 
     const scrollBody = document.getElementById('scroll-body');
@@ -40,6 +41,10 @@
     const nextBtn = document.getElementById('next-year');
     const addBtn = document.getElementById('add-btn');
     const newBtn = document.getElementById('new-item-btn');
+    const batchDeleteBtn = document.getElementById('batch-delete-btn');
+    const batchActions = document.getElementById('batch-actions');
+    const batchDoneBtn = document.getElementById('batch-done-btn');
+    const batchCancelBtn = document.getElementById('batch-cancel-btn');
     const dataDirEl = document.getElementById('data-dir');
 
     function updateAddBtn() {
@@ -56,6 +61,10 @@
       state.data = await store.loadYear(state.year);
       state.drafts = [];
       state.moving = null;
+      state.batch.active = false;
+      state.batch.ids.clear();
+      batchDeleteBtn.hidden = false;
+      batchActions.hidden = true;
       renderer.render(state.year);
       yearLabel.textContent = String(state.year);
       scrollBody.scrollTop = 0;
@@ -101,6 +110,30 @@
     }
 
     addBtn.addEventListener('click', commitDrafts);
+
+    function setBatchMode(active) {
+      state.batch.active = active;
+      if (!active) state.batch.ids.clear();
+      batchDeleteBtn.hidden = active;
+      batchActions.hidden = !active;
+      renderer.renderBars();
+    }
+
+    batchDeleteBtn.addEventListener('click', () => setBatchMode(true));
+
+    batchCancelBtn.addEventListener('click', () => setBatchMode(false));
+
+    batchDoneBtn.addEventListener('click', async () => {
+      const ids = Array.from(state.batch.ids);
+      setBatchMode(false);
+      if (!ids.length) return;
+      try {
+        await store.deleteItems(ids);
+        await onDataChanged();
+      } catch (err) {
+        notifyError(err);
+      }
+    });
 
     newBtn.addEventListener('click', async () => {
       const today = u.todayISO();
@@ -249,11 +282,13 @@
         && today.borderRightColor === 'rgb(156, 91, 78)'; // #9c5b4e / #f9f2dd
       const btnStyle = getComputedStyle(document.querySelector('#new-item-btn'));
       const okButtons = btnStyle.backgroundColor === 'rgb(156, 91, 78)' && btnStyle.color === bg && btnStyle.fontWeight === '700';
+      const addDisabled = getComputedStyle(document.querySelector('#add-btn'));
+      const okAddDisabled = addDisabled.backgroundColor === 'rgb(100, 140, 105)' && addDisabled.color === bg; // #648c69
       const sub = document.querySelector('.app-subtitle');
       const okSub = !!sub && sub.textContent === 'by Aydin' && getComputedStyle(sub).textAlign === 'right';
       const fontOk = getComputedStyle(document.body).fontFamily.indexOf('YaHei') >= 0;
-      const okAll = okHeader && okLabel && okDateText && okCellFlat && okInvalid && okCorners && okMonthBgs && okWeekend && okToday && okButtons && okSub && fontOk;
-      console.log('SMOKE_STYLE_V3 ' + (okAll ? 'ok' : 'FAIL h=' + okHeader + ' l=' + okLabel + ' d=' + okDateText + ' f=' + okCellFlat + ' i=' + okInvalid + ' c=' + okCorners + ' m=' + okMonthBgs + ' w=' + okWeekend + ' t=' + okToday + ' b=' + okButtons + ' s=' + okSub + ' z=' + fontOk));
+      const okAll = okHeader && okLabel && okDateText && okCellFlat && okInvalid && okCorners && okMonthBgs && okWeekend && okToday && okButtons && okAddDisabled && okSub && fontOk;
+      console.log('SMOKE_STYLE_V3 ' + (okAll ? 'ok' : 'FAIL h=' + okHeader + ' l=' + okLabel + ' d=' + okDateText + ' f=' + okCellFlat + ' i=' + okInvalid + ' c=' + okCorners + ' m=' + okMonthBgs + ' w=' + okWeekend + ' t=' + okToday + ' b=' + okButtons + ' ad=' + okAddDisabled + ' s=' + okSub + ' z=' + fontOk));
 
       const singleBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-fixture') === 0);
       const barText = singleBar ? singleBar.querySelector('.bar-text') : null;
@@ -359,6 +394,25 @@
       header.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: hr.left + 4, clientY: hr.top + 4 }));
       bars = document.querySelectorAll('.bar.draft');
       console.log('SMOKE_CLICK_CLEAR ' + (bars.length === 0 ? 'ok' : 'FAIL(' + bars.length + ')'));
+
+      // 批量删除模式
+      const batchDelBtn = document.getElementById('batch-delete-btn');
+      const batchActionsEl = document.getElementById('batch-actions');
+      batchDelBtn.click();
+      console.log('SMOKE_BATCH_ENTER ' + (batchDelBtn.hidden && !batchActionsEl.hidden ? 'ok' : 'FAIL'));
+      const fixtureBar2 = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-fixture') === 0);
+      if (fixtureBar2) fixtureBar2.click();
+      console.log('SMOKE_BATCH_SELECT ' + (fixtureBar2 && fixtureBar2.classList.contains('selected') ? 'ok' : 'FAIL'));
+      if (fixtureBar2) fixtureBar2.click();
+      console.log('SMOKE_BATCH_UNSELECT ' + (fixtureBar2 && !fixtureBar2.classList.contains('selected') ? 'ok' : 'FAIL'));
+      if (fixtureBar2) fixtureBar2.click(); // 重新选中
+      document.getElementById('batch-done-btn').click();
+      window.CalendarStore.loadYear(2026).then((data) => {
+        const gone = !data.items.some((i) => i.id === 'smoke-fixture');
+        const restored = !batchDelBtn.hidden && batchActionsEl.hidden;
+        console.log('SMOKE_BATCH_DELETE ' + (gone && restored ? 'ok' : 'FAIL'));
+      }).catch((err) => console.error('SMOKE_BATCH_ERR ' + (err && err.message ? err.message : String(err))));
+
       console.log('SMOKE_INTERACTION_DONE');
     } catch (err) {
       console.error('SMOKE_INTERACTION_ERROR ' + (err && err.message ? err.message : String(err)));

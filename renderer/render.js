@@ -254,6 +254,9 @@
             this.rowEls[r].layer.appendChild(el);
           }
           el.className = 'bar' + (b.draft ? ' draft' : '') + (b.preview ? ' preview' : '');
+          if (!b.draft && this.state.batch && this.state.batch.ids.has(b.id)) {
+            el.classList.add('selected');
+          }
           el.style.left = left + 'px';
           el.style.top = top + 'px';
           el.style.width = width + 'px';

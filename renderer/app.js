@@ -223,7 +223,9 @@
       const okLabel = mlStyle.backgroundColor === bg && mlStyle.color === ink && mlStyle.fontWeight === '700';
       const dateCell = getComputedStyle(document.querySelector('.cell.valid'));
       const okDateText = dateCell.color === ink;
-      const okCellFlat = dateCell.borderTopLeftRadius === '0px' && dateCell.borderRightColor === 'rgba(0, 0, 0, 0)';
+      const okCellFlat = dateCell.borderTopLeftRadius === '0px' && dateCell.borderRightColor === bg;
+      const invalidStyle = getComputedStyle(document.querySelector('.cell.invalid'));
+      const okInvalid = invalidStyle.backgroundColor === bg;
       const cornerCell = getComputedStyle(document.querySelector('.grid-header + .month-row .cell:nth-child(2)'));
       const okCorners = cornerCell.borderTopLeftRadius === '0px';
       const janRow = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(2) > .row-grid'));
@@ -237,14 +239,15 @@
       const wk = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(2) .cell.weekend'));
       const okWeekend = wk.backgroundColor === 'rgb(225, 208, 178)'; // #e1d0b2
       const today = getComputedStyle(document.querySelector('.cell.today'));
-      const okToday = today.backgroundColor === 'rgb(156, 91, 78)' && today.color === bg; // #9c5b4e / #f9f2dd
+      const okToday = today.backgroundColor === 'rgb(156, 91, 78)' && today.color === bg
+        && today.borderRightColor === 'rgb(156, 91, 78)'; // #9c5b4e / #f9f2dd
       const btnStyle = getComputedStyle(document.querySelector('#new-item-btn'));
-      const okButtons = btnStyle.backgroundColor === 'rgb(156, 91, 78)' && btnStyle.color === bg;
+      const okButtons = btnStyle.backgroundColor === 'rgb(156, 91, 78)' && btnStyle.color === bg && btnStyle.fontWeight === '700';
       const sub = document.querySelector('.app-subtitle');
       const okSub = !!sub && sub.textContent === 'by Aydin' && getComputedStyle(sub).textAlign === 'right';
       const fontOk = getComputedStyle(document.body).fontFamily.indexOf('YaHei') >= 0;
-      const okAll = okHeader && okLabel && okDateText && okCellFlat && okCorners && okMonthBgs && okWeekend && okToday && okButtons && okSub && fontOk;
-      console.log('SMOKE_STYLE_V3 ' + (okAll ? 'ok' : 'FAIL h=' + okHeader + ' l=' + okLabel + ' d=' + okDateText + ' f=' + okCellFlat + ' c=' + okCorners + ' m=' + okMonthBgs + ' w=' + okWeekend + ' t=' + okToday + ' b=' + okButtons + ' s=' + okSub + ' z=' + fontOk));
+      const okAll = okHeader && okLabel && okDateText && okCellFlat && okInvalid && okCorners && okMonthBgs && okWeekend && okToday && okButtons && okSub && fontOk;
+      console.log('SMOKE_STYLE_V3 ' + (okAll ? 'ok' : 'FAIL h=' + okHeader + ' l=' + okLabel + ' d=' + okDateText + ' f=' + okCellFlat + ' i=' + okInvalid + ' c=' + okCorners + ' m=' + okMonthBgs + ' w=' + okWeekend + ' t=' + okToday + ' b=' + okButtons + ' s=' + okSub + ' z=' + fontOk));
 
       const singleBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-fixture') === 0);
       const barText = singleBar ? singleBar.querySelector('.bar-text') : null;
@@ -295,7 +298,7 @@
       bars = document.querySelectorAll('.bar.draft');
       console.log('SMOKE_LOWER_CLICK_KEEP ' + (bars.length === 1 ? 'ok' : 'FAIL(' + bars.length + ')'));
       const addEnabled = getComputedStyle(document.querySelector('#add-btn'));
-      console.log('SMOKE_BUTTONS_ADD ' + (addEnabled.backgroundColor === 'rgb(58, 90, 64)' && addEnabled.color === 'rgb(249, 242, 221)' ? 'ok' : 'FAIL(' + addEnabled.backgroundColor + ')'));
+      console.log('SMOKE_BUTTONS_ADD ' + (addEnabled.backgroundColor === 'rgb(58, 90, 64)' && addEnabled.color === 'rgb(249, 242, 221)' && addEnabled.fontWeight === '700' ? 'ok' : 'FAIL'));
       const dbStyle = bars[0] ? getComputedStyle(bars[0]) : null;
       console.log('SMOKE_DRAFT_COLOR ' + (dbStyle && dbStyle.borderTopColor === 'rgb(156, 91, 78)' && dbStyle.backgroundColor === 'rgba(156, 91, 78, 0.16)' ? 'ok' : 'FAIL'));
 

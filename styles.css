@@ -38,6 +38,7 @@ body {
   color: #f9f2dd;
   cursor: pointer;
   font-size: 13px;
+  font-weight: 700;
 }
 .btn:hover { background: #8b4f43; }
 .btn.primary { background: #3a5a40; }
@@ -121,16 +122,16 @@ body {
 #scroll-body > .month-row:nth-child(12) .cell.weekend,
 #scroll-body > .month-row:nth-child(13) .cell.weekend { background: #e9dbbe; }
 .cell {
-  border-right: 1px solid transparent;
-  border-bottom: 1px solid transparent;
+  border-right: 1px solid #f9f2dd;
+  border-bottom: 1px solid #f9f2dd;
   font-size: 10px;
   color: #681414;
   padding: 2px 3px;
   overflow: hidden;
 }
 .cell.valid { cursor: cell; }
-.cell.invalid { background: transparent; }
-.cell.today { background: #9c5b4e !important; color: #f9f2dd; box-shadow: none; font-weight: 700; }
+.cell.invalid { background: #f9f2dd; }
+.cell.today { background: #9c5b4e !important; border-color: #9c5b4e; color: #f9f2dd; box-shadow: none; font-weight: 700; }
 .bar-layer { position: absolute; inset: 0; pointer-events: none; }
 .bar {
   position: absolute;

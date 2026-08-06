@@ -245,6 +245,8 @@
           item.color = result.color;
           await store.putItems([item]);
         }
+        const nextRecent = dialogs.recordRecentColor(result.color);
+        if (nextRecent) store.setRecentColors(nextRecent).catch(onError);
         await onDataChanged();
       } catch (err) {
         onError(err);

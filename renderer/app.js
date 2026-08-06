@@ -143,13 +143,15 @@
         interval: 1
       });
       if (!res) return;
+      const nextRecent = dialogs.recordRecentColor(res.color);
+      if (nextRecent) store.setRecentColors(nextRecent).catch((err) => console.error(err));
       const dates = u.recurringDates(res.start, res.end, Number(res.interval));
       const seriesId = u.makeId();
       const series = {
         id: seriesId,
         name: res.name,
         notes: '',
-        color: dialogs.DEFAULT_COLOR,
+        color: res.color,
         start: res.start,
         end: res.end,
         intervalDays: Number(res.interval)
@@ -158,7 +160,7 @@
         id: u.makeId(),
         name: res.name,
         notes: '',
-        color: dialogs.DEFAULT_COLOR,
+        color: res.color,
         start: d,
         end: d,
         seriesId
@@ -379,6 +381,12 @@
       const colorInput = modalBox ? modalBox.querySelector('[data-key="color"]') : null;
       if (firstPreset) firstPreset.click();
       console.log('SMOKE_SWATCH_SELECT ' + (colorInput && colorInput.value === firstPreset.dataset.color ? 'ok' : 'FAIL'));
+      const colorToggle = modalBox ? modalBox.querySelector('.color-toggle') : null;
+      const colorPanel = modalBox ? modalBox.querySelector('.color-panel') : null;
+      if (colorToggle) colorToggle.click();
+      console.log('SMOKE_COLOR_PANEL_OPEN ' + (colorPanel && !colorPanel.hidden ? 'ok' : 'FAIL'));
+      document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+      console.log('SMOKE_COLOR_PANEL_CLOSE ' + (colorPanel && colorPanel.hidden ? 'ok' : 'FAIL'));
       const cancelBtn = modal ? modal.querySelector('[data-act="cancel"]') : null;
       if (cancelBtn) cancelBtn.click();
       bars = document.querySelectorAll('.bar.draft');
@@ -412,6 +420,13 @@
         const restored = !batchDelBtn.hidden && batchActionsEl.hidden;
         console.log('SMOKE_BATCH_DELETE ' + (gone && restored ? 'ok' : 'FAIL'));
       }).catch((err) => console.error('SMOKE_BATCH_ERR ' + (err && err.message ? err.message : String(err))));
+
+      window.CalendarDialogs.openNewItemDialog({});
+      const newModal = document.querySelector('.modal-overlay');
+      const newModalColor = newModal ? newModal.querySelector('.color-widget') : null;
+      console.log('SMOKE_NEWITEM_COLOR ' + (newModalColor ? 'ok' : 'FAIL'));
+      const cancelNew = newModal ? newModal.querySelector('[data-act="cancel"]') : null;
+      if (cancelNew) cancelNew.click();
 
       console.log('SMOKE_INTERACTION_DONE');
     } catch (err) {

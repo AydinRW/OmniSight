@@ -42,6 +42,48 @@
     return recentCache.slice();
   }
 
+  function hexToRgb(hex) {
+    const m = /^#([0-9a-fA-F]{6})$/.exec(String(hex || ''));
+    if (!m) return null;
+    const n = parseInt(m[1], 16);
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+
+  function rgbToHex(r, g, b) {
+    const to = (x) => String(Math.max(0, Math.min(255, Math.round(x))).toString(16)).padStart(2, '0');
+    return '#' + to(r) + to(g) + to(b);
+  }
+
+  function rgbToHsv(r, g, b) {
+    const rn = r / 255, gn = g / 255, bn = b / 255;
+    const max = Math.max(rn, gn, bn), min = Math.min(rn, gn, bn);
+    const d = max - min;
+    let h = 0;
+    if (d !== 0) {
+      if (max === rn) h = ((gn - bn) / d) % 6;
+      else if (max === gn) h = (bn - rn) / d + 2;
+      else h = (rn - gn) / d + 4;
+      h *= 60;
+      if (h < 0) h += 360;
+    }
+    return { h, s: max === 0 ? 0 : d / max, v: max };
+  }
+
+  function hsvToRgb(h, s, v) {
+    h = ((h % 360) + 360) % 360;
+    const c = v * s;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = v - c;
+    let r = 0, g = 0, b = 0;
+    if (h < 60) { r = c; g = x; }
+    else if (h < 120) { r = x; g = c; }
+    else if (h < 180) { g = c; b = x; }
+    else if (h < 240) { g = x; b = c; }
+    else if (h < 300) { r = x; b = c; }
+    else { r = c; b = x; }
+    return { r: Math.round((r + m) * 255), g: Math.round((g + m) * 255), b: Math.round((b + m) * 255) };
+  }
+
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -60,7 +102,7 @@
       box.className = 'modal-box';
       let html = '<div class="modal-title">' + esc(title) + '</div><div class="modal-body">';
       for (const f of fields) {
-        html += '<label class="field"><span class="field-label">' + esc(f.label) + (f.required ? ' <em>*</em>' : '') + '</span>';
+        html += '<div class="field"><span class="field-label">' + esc(f.label) + (f.required ? ' <em>*</em>' : '') + '</span>';
         if (f.type === 'textarea') {
           html += '<textarea data-key="' + f.key + '" rows="3">' + esc(f.value || '') + '</textarea>';
         } else if (f.type === 'radio') {
@@ -74,7 +116,8 @@
         } else if (f.type === 'colors') {
           const cur = f.value != null ? f.value : DEFAULT_COLOR;
           html += '<div class="color-widget">';
-          html += '<input type="color" data-key="' + f.key + '" value="' + esc(cur) + '">';
+          html += '<button type="button" class="color-toggle" style="background:' + esc(cur) + '" title="选择颜色"></button>';
+          html += '<input type="hidden" data-key="' + f.key + '" value="' + esc(cur) + '">';
           const recent = getRecentColors();
           if (recent.length) {
             html += '<div class="color-recent-label">最近使用</div><div class="color-swatches">';
@@ -90,6 +133,12 @@
             }
             html += '</div>';
           }
+          html += '<div class="color-panel" hidden>'
+            + '<div class="cp-sv"><div class="cp-cursor"></div></div>'
+            + '<input type="range" class="cp-hue" min="0" max="360" step="1" value="0">'
+            + '<div class="cp-foot"><input type="text" class="cp-hex" maxlength="7" value="' + esc(cur) + '">'
+            + '<button type="button" class="cp-close btn">确定</button></div>'
+            + '</div>';
           html += '</div>';
         } else {
           html += '<input type="' + f.type + '" data-key="' + f.key + '" value="' + esc(f.value != null ? f.value : '') + '"'
@@ -98,33 +147,127 @@
             + (f.max != null ? ' max="' + f.max + '"' : '')
             + ' placeholder="' + esc(f.placeholder || '') + '">';
         }
-        html += '</label>';
+        html += '</div>';
       }
       html += '</div><p class="modal-error" hidden></p><div class="modal-actions">'
         + '<button type="button" class="btn" data-act="cancel">' + esc(cancelText) + '</button>'
         + '<button type="button" class="btn primary" data-act="ok">' + esc(okText) + '</button></div>';
       box.innerHTML = html;
-      // 色板交互：点击色块把颜色写入对应输入框并高亮；自定义取色时取消高亮。
-      const swatches = box.querySelectorAll('.swatch');
-      for (const sw of swatches) {
-        sw.addEventListener('click', () => {
-          const widget = sw.closest('.color-widget');
-          const input = widget ? widget.querySelector('input[type="color"]') : null;
-          if (!input) return;
-          input.value = sw.dataset.color;
-          for (const s of swatches) s.classList.toggle('selected', s === sw);
-        });
-      }
-      const colorInputs = box.querySelectorAll('.color-widget input[type="color"]');
-      for (const ci of colorInputs) {
-        const sws = ci.closest('.color-widget').querySelectorAll('.swatch');
-        for (const s of sws) {
-          if (s.dataset.color === ci.value) s.classList.add('selected');
+      // 颜色控件：色块/光谱面板写入隐藏输入框；面板仅由颜色按钮开合，点击其他区域自动关闭。
+      const colorWidgets = box.querySelectorAll('.color-widget');
+
+      function setColorValue(widget, hex) {
+        const input = widget.querySelector('input[data-key]');
+        if (!input || !/^#[0-9a-fA-F]{6}$/.test(String(hex))) return;
+        const low = hex.toLowerCase();
+        input.value = low;
+        const toggle = widget.querySelector('.color-toggle');
+        if (toggle) toggle.style.background = low;
+        for (const s of widget.querySelectorAll('.swatch')) {
+          s.classList.toggle('selected', s.dataset.color === low);
         }
-        ci.addEventListener('input', () => {
-          for (const s of sws) s.classList.remove('selected');
+      }
+
+      function refreshPanel(widget) {
+        const panel = widget.querySelector('.color-panel');
+        if (!panel || panel.hidden) return;
+        const input = widget.querySelector('input[data-key]');
+        const hue = panel.querySelector('.cp-hue');
+        const sv = panel.querySelector('.cp-sv');
+        const cursor = panel.querySelector('.cp-cursor');
+        const hexInput = panel.querySelector('.cp-hex');
+        const rgb = hexToRgb(input.value);
+        if (!rgb) return;
+        const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+        hue.value = String(Math.round(hsv.h));
+        sv.style.background = 'linear-gradient(to top, #000, rgba(0,0,0,0)), linear-gradient(to right, #fff, hsl(' + hue.value + ',100%,50%))';
+        cursor.style.left = (hsv.s * 100) + '%';
+        cursor.style.top = ((1 - hsv.v) * 100) + '%';
+        hexInput.value = input.value;
+      }
+
+      for (const widget of colorWidgets) {
+        const panel = widget.querySelector('.color-panel');
+        const input = widget.querySelector('input[data-key]');
+        const toggle = widget.querySelector('.color-toggle');
+        const sv = panel.querySelector('.cp-sv');
+        const cursor = panel.querySelector('.cp-cursor');
+        const hue = panel.querySelector('.cp-hue');
+        const hexInput = panel.querySelector('.cp-hex');
+
+        setColorValue(widget, input.value);
+
+        for (const sw of widget.querySelectorAll('.swatch')) {
+          sw.addEventListener('click', () => {
+            setColorValue(widget, sw.dataset.color);
+            refreshPanel(widget);
+          });
+        }
+
+        function pickSv(clientX, clientY) {
+          const rect = sv.getBoundingClientRect();
+          const s = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+          const v = Math.max(0, Math.min(1, 1 - (clientY - rect.top) / rect.height));
+          const rgb = hsvToRgb(Number(hue.value), s, v);
+          setColorValue(widget, rgbToHex(rgb.r, rgb.g, rgb.b));
+          cursor.style.left = (s * 100) + '%';
+          cursor.style.top = ((1 - v) * 100) + '%';
+        }
+        function onSvMove(e) { pickSv(e.clientX, e.clientY); }
+        function onSvUp() {
+          window.removeEventListener('pointermove', onSvMove);
+          window.removeEventListener('pointerup', onSvUp);
+        }
+        sv.addEventListener('pointerdown', (e) => {
+          e.stopPropagation();
+          pickSv(e.clientX, e.clientY);
+          window.addEventListener('pointermove', onSvMove);
+          window.addEventListener('pointerup', onSvUp);
+        });
+
+        hue.addEventListener('input', () => {
+          const hsv = rgbToHsv(hexToRgb(input.value).r, hexToRgb(input.value).g, hexToRgb(input.value).b);
+          const rgb = hsvToRgb(Number(hue.value), hsv.s, hsv.v);
+          setColorValue(widget, rgbToHex(rgb.r, rgb.g, rgb.b));
+          sv.style.background = 'linear-gradient(to top, #000, rgba(0,0,0,0)), linear-gradient(to right, #fff, hsl(' + hue.value + ',100%,50%))';
+          cursor.style.left = (hsv.s * 100) + '%';
+          cursor.style.top = ((1 - hsv.v) * 100) + '%';
+        });
+
+        hexInput.addEventListener('change', () => {
+          const v = hexInput.value.trim();
+          if (/^#[0-9a-fA-F]{6}$/.test(v)) {
+            setColorValue(widget, v);
+            refreshPanel(widget);
+          } else {
+            hexInput.value = input.value;
+          }
+        });
+
+        toggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          for (const w of colorWidgets) {
+            w.querySelector('.color-panel').hidden = true;
+          }
+          panel.hidden = !panel.hidden;
+          if (!panel.hidden) refreshPanel(widget);
+        });
+
+        panel.querySelector('.cp-close').addEventListener('click', (e) => {
+          e.stopPropagation();
+          panel.hidden = true;
         });
       }
+
+      // 点击颜色控件以外的任意区域，自动收起已打开的光谱面板。
+      function onDocMousedown(e) {
+        if (!e.target.closest || !e.target.closest('.color-widget')) {
+          for (const w of colorWidgets) {
+            w.querySelector('.color-panel').hidden = true;
+          }
+        }
+      }
+      document.addEventListener('mousedown', onDocMousedown, true);
       overlay.appendChild(box);
       document.body.appendChild(overlay);
       const errorEl = box.querySelector('.modal-error');
@@ -146,6 +289,7 @@
       function cleanup() {
         document.body.removeChild(overlay);
         document.removeEventListener('keydown', onKey, true);
+        document.removeEventListener('mousedown', onDocMousedown, true);
       }
 
       function ok() {
@@ -202,7 +346,8 @@
       { key: 'name', label: '事项名称', type: 'text', required: true, value: d.name || '', placeholder: '例如：每日晨会' },
       { key: 'start', label: '起始年月日', type: 'date', required: true, value: d.start || '' },
       { key: 'end', label: '结束年月日', type: 'date', required: true, value: d.end || '' },
-      { key: 'interval', label: '重复间隔天数', type: 'number', required: true, value: d.interval != null ? d.interval : 1, min: 1, placeholder: 'N' }
+      { key: 'interval', label: '重复间隔天数', type: 'number', required: true, value: d.interval != null ? d.interval : 1, min: 1, placeholder: 'N' },
+      { key: 'color', label: '横条颜色', type: 'colors', value: d.color || DEFAULT_COLOR }
     ], {
       okText: '生成事项',
       validate: (v) => {
@@ -219,7 +364,7 @@
     const fields = [
       { key: 'name', label: '事项名称', type: 'text', required: true, value: item.name },
       { key: 'notes', label: '备注', type: 'textarea', value: item.notes || '' },
-      { key: 'color', label: '横条颜色', type: 'color', value: item.color || DEFAULT_COLOR }
+      { key: 'color', label: '横条颜色', type: 'colors', value: item.color || DEFAULT_COLOR }
     ];
     if (isSeriesMember) {
       fields.push({

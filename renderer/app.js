@@ -252,6 +252,8 @@
       const singleBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-fixture') === 0);
       const barText = singleBar ? singleBar.querySelector('.bar-text') : null;
       console.log('SMOKE_SINGLE_BAR_TEXT ' + (barText && barText.textContent === '单日测试' ? 'ok' : 'FAIL(text=' + (barText ? barText.textContent : 'none') + ')'));
+      const barTextColor = singleBar ? getComputedStyle(singleBar).color : null;
+      console.log('SMOKE_BAR_TEXT_COLOR ' + (barTextColor === 'rgb(255, 255, 255)' ? 'ok' : 'FAIL(' + barTextColor + ')'));
 
       const cell = document.querySelector('.cell.valid[data-date="2026-01-01"]');
       if (!cell) {

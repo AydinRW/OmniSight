@@ -18,6 +18,17 @@
   // 只要空间能容纳至少一个字符就显示（不足则截断为省略号）。
   const TEXT_MIN_WIDTH = 20;
 
+  // 根据横条底色亮度选择文字颜色：底色偏深用白色，偏浅用黑色。
+  function isLightColor(hex) {
+    const m = /^#([0-9a-fA-F]{6})$/.exec(String(hex || ''));
+    if (!m) return false;
+    const n = parseInt(m[1], 16);
+    const r = (n >> 16) & 255;
+    const g = (n >> 8) & 255;
+    const b = n & 255;
+    return (0.299 * r + 0.587 * g + 0.114 * b) > 150;
+  }
+
   // 每个月份行内，把与行有交集的事项条分配到“泳道”（垂直槽位）：
   // 按 (开始日期, id) 顺序贪心分配最低可用泳道；不重叠的事项可复用同一泳道，
   // 因此不同日期的单日事项都从第 1 格开始堆叠，不会互相抬高月份行。
@@ -248,6 +259,7 @@
           el.style.width = width + 'px';
           el.style.height = BAR_HEIGHT + 'px';
           el.style.background = b.draft ? '' : b.color;
+          el.style.color = b.draft ? '' : (isLightColor(b.color) ? '#000000' : '#ffffff');
           if (width >= TEXT_MIN_WIDTH && !b.draft) {
             let span = el.querySelector('.bar-text');
             if (!span) {
@@ -305,6 +317,7 @@
   }
 
   CalendarRenderer.assignSlots = assignSlots;
+  CalendarRenderer.isLightColor = isLightColor;
   CalendarRenderer.CONSTANTS = { DATE_AREA, BAR_HEIGHT, BAR_SLOT, MIN_ROW_HEIGHT, LABEL_WIDTH, HEADER_HEIGHT };
   return CalendarRenderer;
 });

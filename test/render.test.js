@@ -75,3 +75,11 @@ test('overlapping bars stack into separate lanes', () => {
   assert.equal(slots.get('multi'), 0);
   assert.equal(slots.get('single'), 1);
 });
+
+test('isLightColor picks black text on light bars and white on dark bars', () => {
+  assert.equal(CalendarRenderer.isLightColor('#ffffff'), true);
+  assert.equal(CalendarRenderer.isLightColor('#f5d442'), true);
+  assert.equal(CalendarRenderer.isLightColor('#000000'), false);
+  assert.equal(CalendarRenderer.isLightColor('#3b82f6'), false);
+  assert.equal(CalendarRenderer.isLightColor('#9c5b4e'), false);
+});

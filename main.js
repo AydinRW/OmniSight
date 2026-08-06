@@ -226,6 +226,39 @@ ipcMain.handle('calendar:updateSeries', (_e, rawSeriesId, rawPatch) => {
 
 ipcMain.handle('calendar:getDataDir', () => DATA_DIR);
 
+const RECENT_FILE = path.join(DATA_DIR, 'recent-colors.json');
+
+function normalizeRecent(list) {
+  if (!Array.isArray(list)) return [];
+  return list
+    .filter((c) => typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c))
+    .slice(0, 5);
+}
+
+ipcMain.handle('calendar:getRecentColors', () => {
+  try {
+    return normalizeRecent(JSON.parse(fs.readFileSync(RECENT_FILE, 'utf8')));
+  } catch (_) {
+    return [];
+  }
+});
+
+ipcMain.handle('calendar:setRecentColors', (_e, list) => {
+  const arr = normalizeRecent(list);
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    const tmp = RECENT_FILE + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(arr), 'utf8');
+    try {
+      fs.renameSync(tmp, RECENT_FILE);
+    } catch (_) {
+      fs.writeFileSync(RECENT_FILE, JSON.stringify(arr), 'utf8');
+      try { fs.unlinkSync(tmp); } catch (__) { /* ignore */ }
+    }
+  } catch (_) { /* ignore */ }
+  return arr;
+});
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1440,
@@ -258,6 +291,10 @@ if (isSmoke) {
       console.log('[renderer] ' + message);
       const lv = typeof level === 'string' ? level : Number(level);
       if (lv === 'error' || lv === 3) rendererError = true;
+    });
+    contents.on('render-process-gone', (_e, details) => {
+      console.error('RENDER_GONE ' + JSON.stringify(details));
+      logs.push('RENDER_GONE ' + JSON.stringify(details));
     });
     contents.on('did-finish-load', () => {
       const shotPath = path.join(app.getAppPath(), '.smoke-shot.png');

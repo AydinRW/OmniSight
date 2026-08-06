@@ -9,6 +9,39 @@
 
   const DEFAULT_COLOR = '#3b82f6';
 
+  const PRESET_GROUPS = [
+    ['#d1e2d6', '#b8d2bf', '#9cb8a3', '#7a9e86', '#5e8069'],
+    ['#f0d9dd', '#e2c4ca', '#d1a8b0', '#bc8a96', '#9e6d79'],
+    ['#d6e0e8', '#b8c9d8', '#97afc2', '#7898af', '#5e7c94'],
+    ['#e9d9cc', '#d9c2ad', '#c8a88e', '#b08e70', '#8f7057'],
+    ['#e2dce7', '#d1c5db', '#b8a7c8', '#9e8bb8', '#826ea0']
+  ];
+  const PRESET_COLORS = [].concat.apply([], PRESET_GROUPS);
+  let recentCache = [];
+
+  function getRecentColors() {
+    return recentCache.slice();
+  }
+
+  // 由外部（app.js）从本地存储加载后注入。
+  function setRecentColors(list) {
+    recentCache = (Array.isArray(list) ? list : [])
+      .filter((c) => typeof c === 'string' && /^#[0-9a-fA-F]{6}$/.test(c))
+      .slice(0, 5);
+  }
+
+  // 记录“最近使用颜色”：仅记录非预设的自定义颜色，最多 5 个，去重且最新在前。
+  // 返回更新后的列表（供外部持久化）；若颜色无效或属于预设则返回 null。
+  function recordRecentColor(hex) {
+    const c = String(hex || '').toLowerCase();
+    if (!/^#[0-9a-f]{6}$/.test(c)) return null;
+    if (PRESET_COLORS.indexOf(c) >= 0) return null;
+    const list = recentCache.filter((x) => x !== c);
+    list.unshift(c);
+    recentCache = list.slice(0, 5);
+    return recentCache.slice();
+  }
+
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -38,6 +71,26 @@
             html += '<label class="radio"><input type="radio" name="' + f.key + '" value="' + esc(oo.value) + '"' + checked + '>' + esc(oo.label) + '</label>';
           }
           html += '</span>';
+        } else if (f.type === 'colors') {
+          const cur = f.value != null ? f.value : DEFAULT_COLOR;
+          html += '<div class="color-widget">';
+          html += '<input type="color" data-key="' + f.key + '" value="' + esc(cur) + '">';
+          const recent = getRecentColors();
+          if (recent.length) {
+            html += '<div class="color-recent-label">最近使用</div><div class="color-swatches">';
+            for (const c of recent) {
+              html += '<button type="button" class="swatch recent" data-color="' + esc(c) + '" style="background:' + esc(c) + '" title="' + esc(c) + '"></button>';
+            }
+            html += '</div>';
+          }
+          for (const group of PRESET_GROUPS) {
+            html += '<div class="color-swatches">';
+            for (const c of group) {
+              html += '<button type="button" class="swatch preset" data-color="' + esc(c) + '" style="background:' + esc(c) + '" title="' + esc(c) + '"></button>';
+            }
+            html += '</div>';
+          }
+          html += '</div>';
         } else {
           html += '<input type="' + f.type + '" data-key="' + f.key + '" value="' + esc(f.value != null ? f.value : '') + '"'
             + (f.required ? ' required' : '')
@@ -51,6 +104,27 @@
         + '<button type="button" class="btn" data-act="cancel">' + esc(cancelText) + '</button>'
         + '<button type="button" class="btn primary" data-act="ok">' + esc(okText) + '</button></div>';
       box.innerHTML = html;
+      // 色板交互：点击色块把颜色写入对应输入框并高亮；自定义取色时取消高亮。
+      const swatches = box.querySelectorAll('.swatch');
+      for (const sw of swatches) {
+        sw.addEventListener('click', () => {
+          const widget = sw.closest('.color-widget');
+          const input = widget ? widget.querySelector('input[type="color"]') : null;
+          if (!input) return;
+          input.value = sw.dataset.color;
+          for (const s of swatches) s.classList.toggle('selected', s === sw);
+        });
+      }
+      const colorInputs = box.querySelectorAll('.color-widget input[type="color"]');
+      for (const ci of colorInputs) {
+        const sws = ci.closest('.color-widget').querySelectorAll('.swatch');
+        for (const s of sws) {
+          if (s.dataset.color === ci.value) s.classList.add('selected');
+        }
+        ci.addEventListener('input', () => {
+          for (const s of sws) s.classList.remove('selected');
+        });
+      }
       overlay.appendChild(box);
       document.body.appendChild(overlay);
       const errorEl = box.querySelector('.modal-error');
@@ -115,7 +189,7 @@
     return openForm('添加事项（' + draftCount + ' 条草稿）', [
       { key: 'name', label: '事项名称', type: 'text', required: true, placeholder: '例如：项目周报' },
       { key: 'notes', label: '备注', type: 'textarea', value: '' },
-      { key: 'color', label: '横条颜色', type: 'color', value: DEFAULT_COLOR }
+      { key: 'color', label: '横条颜色', type: 'colors', value: DEFAULT_COLOR }
     ], {
       okText: '确认添加',
       validate: (v) => (v.name ? '' : '请填写事项名称')
@@ -306,6 +380,10 @@
 
   return {
     DEFAULT_COLOR,
+    PRESET_COLORS,
+    getRecentColors,
+    setRecentColors,
+    recordRecentColor,
     openAddDialog,
     openNewItemDialog,
     openEditDialog,

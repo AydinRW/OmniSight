@@ -191,6 +191,28 @@ body {
   cursor: pointer;
   background: #fff;
 }
+.color-widget { display: flex; flex-direction: column; gap: 8px; }
+.color-widget input[type="color"] {
+  width: 56px;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #fff;
+}
+.color-recent-label { font-size: 11px; color: #681414; opacity: 0.75; }
+.color-swatches { display: flex; gap: 6px; flex-wrap: wrap; }
+.swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+}
+.swatch:hover { border-color: #9c5b4e; }
+.swatch.selected { border-color: #681414; }
 .field textarea { resize: vertical; }
 .radio-group { display: flex; gap: 14px; padding: 4px 0; }
 .radio { display: flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer; }

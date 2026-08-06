@@ -80,6 +80,8 @@
       if (!state.drafts.length) return;
       const res = await dialogs.openAddDialog(state.drafts.length);
       if (!res) return;
+      const nextRecent = dialogs.recordRecentColor(res.color);
+      if (nextRecent) store.setRecentColors(nextRecent).catch((err) => console.error(err));
       const items = state.drafts.map((d) => ({
         id: u.makeId(),
         name: res.name,
@@ -155,6 +157,10 @@
     });
 
     window.addEventListener('resize', debounce(() => renderer.refresh(), 120));
+
+    try {
+      dialogs.setRecentColors(await store.getRecentColors());
+    } catch (_) { /* ignore */ }
 
     if (window.location.hash === '#smoke') {
       try {
@@ -304,6 +310,17 @@
       const dbStyle = bars[0] ? getComputedStyle(bars[0]) : null;
       console.log('SMOKE_DRAFT_COLOR ' + (dbStyle && dbStyle.borderTopColor === 'rgb(156, 91, 78)' && dbStyle.backgroundColor === 'rgba(156, 91, 78, 0.16)' ? 'ok' : 'FAIL'));
 
+      // 最近使用颜色：自定义颜色计入，预设颜色不计入。
+      console.log('SMOKE_RECENT_BEGIN');
+      const dlgApi = window.CalendarDialogs;
+      dlgApi.recordRecentColor('#123456');
+      console.log('SMOKE_RECENT_COLOR ' + (dlgApi.getRecentColors()[0] === '#123456' ? 'ok' : 'FAIL'));
+      dlgApi.recordRecentColor('#d1e2d6'); // 预设色
+      console.log('SMOKE_RECENT_PRESET ' + (dlgApi.getRecentColors().length === 1 ? 'ok' : 'FAIL(' + dlgApi.getRecentColors().length + ')'));
+      window.CalendarStore.setRecentColors(dlgApi.getRecentColors()).then(() => window.CalendarStore.getRecentColors()).then((loaded) => {
+        console.log('SMOKE_RECENT_IPC ' + (loaded.length === 1 && loaded[0] === '#123456' ? 'ok' : 'FAIL'));
+      }).catch((err) => console.error('SMOKE_RECENT_IPC_ERR ' + (err && err.message ? err.message : String(err))));
+
       // 双击草稿条应直接弹出【添加事项】弹窗；取消后草稿保留。
       const draftBar = document.querySelector('.bar.draft');
       if (draftBar) {
@@ -319,6 +336,14 @@
       const modalStyle = modalBox ? getComputedStyle(modalBox) : null;
       console.log('SMOKE_DBLCLICK_DRAFT_DIALOG ' + (modal && modal.textContent.indexOf('添加事项') >= 0 && modalStyle
         && modalStyle.backgroundColor === 'rgb(249, 242, 221)' && modalStyle.fontFamily.indexOf('YaHei') >= 0 ? 'ok' : 'FAIL(no-modal)'));
+      const presetSwatches = modalBox ? modalBox.querySelectorAll('.swatch.preset') : [];
+      const recentSwatches = modalBox ? modalBox.querySelectorAll('.swatch.recent') : [];
+      console.log('SMOKE_COLOR_PRESETS ' + (presetSwatches.length === 25 ? 'ok' : 'FAIL(' + presetSwatches.length + ')'));
+      console.log('SMOKE_COLOR_RECENT ' + (recentSwatches.length >= 1 ? 'ok' : 'FAIL(' + recentSwatches.length + ')'));
+      const firstPreset = presetSwatches[0];
+      const colorInput = modalBox ? modalBox.querySelector('[data-key="color"]') : null;
+      if (firstPreset) firstPreset.click();
+      console.log('SMOKE_SWATCH_SELECT ' + (colorInput && colorInput.value === firstPreset.dataset.color ? 'ok' : 'FAIL'));
       const cancelBtn = modal ? modal.querySelector('[data-act="cancel"]') : null;
       if (cancelBtn) cancelBtn.click();
       bars = document.querySelectorAll('.bar.draft');

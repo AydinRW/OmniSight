@@ -10,5 +10,7 @@ contextBridge.exposeInMainWorld('calendarAPI', {
   deleteSeries: (ids) => ipcRenderer.invoke('calendar:deleteSeries', ids),
   deleteSeriesAndMembers: (seriesId) => ipcRenderer.invoke('calendar:deleteSeriesAndMembers', seriesId),
   updateSeries: (seriesId, patch) => ipcRenderer.invoke('calendar:updateSeries', seriesId, patch),
-  getDataDir: () => ipcRenderer.invoke('calendar:getDataDir')
+  getDataDir: () => ipcRenderer.invoke('calendar:getDataDir'),
+  getRecentColors: () => ipcRenderer.invoke('calendar:getRecentColors'),
+  setRecentColors: (list) => ipcRenderer.invoke('calendar:setRecentColors', list)
 });

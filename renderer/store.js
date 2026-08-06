@@ -20,6 +20,8 @@
     deleteSeries: (ids) => api().deleteSeries(ids),
     deleteSeriesAndMembers: (seriesId) => api().deleteSeriesAndMembers(seriesId),
     updateSeries: (seriesId, patch) => api().updateSeries(seriesId, patch),
-    getDataDir: () => api().getDataDir()
+    getDataDir: () => api().getDataDir(),
+    getRecentColors: () => api().getRecentColors(),
+    setRecentColors: (list) => api().setRecentColors(list)
   };
 });

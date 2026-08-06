@@ -215,6 +215,16 @@
         + ' scrollW=' + sb.scrollWidth + ' clientW=' + sb.clientWidth
         + ' hasHScroll=' + (sb.scrollWidth > sb.clientWidth));
       console.log('SMOKE_LAYOUT_TOPBAR ' + (document.getElementById('sidebar') === null && document.querySelector('#topbar #add-btn') && document.querySelector('#topbar #new-item-btn') ? 'ok' : 'FAIL'));
+      const hcStyle = getComputedStyle(document.querySelector('.header-cell'));
+      const mlStyle = getComputedStyle(document.querySelector('.month-label'));
+      const cellStyle = getComputedStyle(document.querySelector('.cell.valid'));
+      const okRadius = hcStyle.borderTopLeftRadius === '8px' && hcStyle.borderTopRightRadius === '8px'
+        && hcStyle.borderBottomLeftRadius === '0px' && hcStyle.borderBottomRightRadius === '0px'
+        && mlStyle.borderTopLeftRadius === '8px' && mlStyle.borderBottomLeftRadius === '8px'
+        && mlStyle.borderTopRightRadius === '0px' && mlStyle.borderBottomRightRadius === '0px';
+      const okCell = cellStyle.borderTopLeftRadius === '0px' && cellStyle.borderTopRightRadius === '0px'
+        && cellStyle.borderBottomLeftRadius === '0px' && cellStyle.borderBottomRightRadius === '0px';
+      console.log('SMOKE_STYLE_RADIUS ' + (okRadius && okCell ? 'ok' : 'FAIL h=' + hcStyle.borderTopLeftRadius + ' l=' + mlStyle.borderTopLeftRadius + ' c=' + cellStyle.borderTopLeftRadius));
 
       const singleBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-fixture') === 0);
       const barText = singleBar ? singleBar.querySelector('.bar-text') : null;

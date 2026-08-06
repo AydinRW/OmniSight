@@ -217,31 +217,34 @@
       console.log('SMOKE_LAYOUT_TOPBAR ' + (document.getElementById('sidebar') === null && document.querySelector('#topbar #add-btn') && document.querySelector('#topbar #new-item-btn') ? 'ok' : 'FAIL'));
       const hcStyle = getComputedStyle(document.querySelector('.header-cell'));
       const mlStyle = getComputedStyle(document.querySelector('.month-label'));
-      const bg = 'rgb(247, 244, 237)'; // #f7f4ed 页面底色
-      const okHeader = hcStyle.borderTopLeftRadius === '0px' && hcStyle.borderRightWidth === '0px'
-        && hcStyle.backgroundColor === bg && hcStyle.color === 'rgb(0, 0, 0)';
-      const okLabel = mlStyle.borderTopLeftRadius === '0px' && mlStyle.borderRightWidth === '0px'
-        && mlStyle.borderBottomWidth === '0px' && mlStyle.backgroundColor === bg && mlStyle.color === 'rgb(0, 0, 0)';
-      const cornerCell = getComputedStyle(document.querySelector('.grid-header + .month-row .cell:nth-child(2)'));
-      const okCorners = cornerCell.borderTopLeftRadius === '10px' && cornerCell.borderTopRightRadius === '10px';
-      const innerCell = getComputedStyle(document.querySelectorAll('.month-row')[1].querySelectorAll('.cell')[5]);
-      const okInner = innerCell.borderTopLeftRadius === '0px' && innerCell.borderBottomRightRadius === '0px';
-      const lastCol = getComputedStyle(document.querySelector('.month-row .cell:last-child'));
-      const lastRow = getComputedStyle(document.querySelector('.month-row:last-child .cell'));
-      const okBorders = lastCol.borderRightWidth === '0px' && lastRow.borderBottomWidth === '0px';
+      const bg = 'rgb(249, 242, 221)'; // #f9f2dd 页面底色
+      const ink = 'rgb(104, 20, 20)'; // #681414 文字色
+      const okHeader = hcStyle.backgroundColor === bg && hcStyle.color === ink && hcStyle.fontWeight === '700';
+      const okLabel = mlStyle.backgroundColor === bg && mlStyle.color === ink && mlStyle.fontWeight === '700';
       const dateCell = getComputedStyle(document.querySelector('.cell.valid'));
-      const okDateText = dateCell.color === 'rgb(85, 85, 85)'; // 日期数字深灰
+      const okDateText = dateCell.color === ink;
+      const okCellFlat = dateCell.borderTopLeftRadius === '0px' && dateCell.borderRightColor === 'rgba(0, 0, 0, 0)';
+      const cornerCell = getComputedStyle(document.querySelector('.grid-header + .month-row .cell:nth-child(2)'));
+      const okCorners = cornerCell.borderTopLeftRadius === '0px';
       const janRow = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(2) > .row-grid'));
-      const febRow = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(3) > .row-grid'));
       const aprRow = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(5) > .row-grid'));
       const julRow = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(8) > .row-grid'));
       const octRow = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(11) > .row-grid'));
-      const q1 = 'rgb(237, 232, 235)'; // #ede8eb 浅灰紫
-      const okMonthBgs = janRow.backgroundColor === q1 && febRow.backgroundColor === q1
-        && aprRow.backgroundColor === 'rgb(243, 242, 232)' // #f3f2e8 浅米奶白
-        && julRow.backgroundColor === 'rgb(230, 242, 241)' // #e6f2f1 浅薄荷青
-        && octRow.backgroundColor === 'rgb(244, 232, 237)'; // #f4e8ed 浅柔粉
-      console.log('SMOKE_STYLE_V2 ' + (okHeader && okLabel && okCorners && okInner && okBorders && okDateText && okMonthBgs ? 'ok' : 'FAIL'));
+      const qAB = 'rgb(235, 220, 196)'; // #ebdcc4
+      const qBB = 'rgb(242, 230, 204)'; // #f2e6cc
+      const okMonthBgs = janRow.backgroundColor === qAB && aprRow.backgroundColor === qBB
+        && julRow.backgroundColor === qAB && octRow.backgroundColor === qBB;
+      const wk = getComputedStyle(document.querySelector('#scroll-body > .month-row:nth-child(2) .cell.weekend'));
+      const okWeekend = wk.backgroundColor === 'rgb(225, 208, 178)'; // #e1d0b2
+      const today = getComputedStyle(document.querySelector('.cell.today'));
+      const okToday = today.backgroundColor === 'rgb(156, 91, 78)' && today.color === bg; // #9c5b4e / #f9f2dd
+      const btnStyle = getComputedStyle(document.querySelector('#new-item-btn'));
+      const okButtons = btnStyle.backgroundColor === 'rgb(156, 91, 78)' && btnStyle.color === bg;
+      const sub = document.querySelector('.app-subtitle');
+      const okSub = !!sub && sub.textContent === 'by Aydin' && getComputedStyle(sub).textAlign === 'right';
+      const fontOk = getComputedStyle(document.body).fontFamily.indexOf('YaHei') >= 0;
+      const okAll = okHeader && okLabel && okDateText && okCellFlat && okCorners && okMonthBgs && okWeekend && okToday && okButtons && okSub && fontOk;
+      console.log('SMOKE_STYLE_V3 ' + (okAll ? 'ok' : 'FAIL h=' + okHeader + ' l=' + okLabel + ' d=' + okDateText + ' f=' + okCellFlat + ' c=' + okCorners + ' m=' + okMonthBgs + ' w=' + okWeekend + ' t=' + okToday + ' b=' + okButtons + ' s=' + okSub + ' z=' + fontOk));
 
       const singleBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-fixture') === 0);
       const barText = singleBar ? singleBar.querySelector('.bar-text') : null;
@@ -291,8 +294,10 @@
       clickXY(freshCell, upperX, freshRect.top + 55, { pointerId: 4 });
       bars = document.querySelectorAll('.bar.draft');
       console.log('SMOKE_LOWER_CLICK_KEEP ' + (bars.length === 1 ? 'ok' : 'FAIL(' + bars.length + ')'));
+      const addEnabled = getComputedStyle(document.querySelector('#add-btn'));
+      console.log('SMOKE_BUTTONS_ADD ' + (addEnabled.backgroundColor === 'rgb(58, 90, 64)' && addEnabled.color === 'rgb(249, 242, 221)' ? 'ok' : 'FAIL(' + addEnabled.backgroundColor + ')'));
       const dbStyle = bars[0] ? getComputedStyle(bars[0]) : null;
-      console.log('SMOKE_DRAFT_PURPLE ' + (dbStyle && dbStyle.borderTopColor === 'rgb(107, 91, 149)' && dbStyle.backgroundColor === 'rgba(107, 91, 149, 0.2)' ? 'ok' : 'FAIL'));
+      console.log('SMOKE_DRAFT_COLOR ' + (dbStyle && dbStyle.borderTopColor === 'rgb(156, 91, 78)' && dbStyle.backgroundColor === 'rgba(156, 91, 78, 0.16)' ? 'ok' : 'FAIL'));
 
       // 双击草稿条应直接弹出【添加事项】弹窗；取消后草稿保留。
       const draftBar = document.querySelector('.bar.draft');
@@ -305,7 +310,10 @@
         }));
       }
       const modal = document.querySelector('.modal-overlay');
-      console.log('SMOKE_DBLCLICK_DRAFT_DIALOG ' + (modal && modal.textContent.indexOf('添加事项') >= 0 ? 'ok' : 'FAIL(no-modal)'));
+      const modalBox = modal ? modal.querySelector('.modal-box') : null;
+      const modalStyle = modalBox ? getComputedStyle(modalBox) : null;
+      console.log('SMOKE_DBLCLICK_DRAFT_DIALOG ' + (modal && modal.textContent.indexOf('添加事项') >= 0 && modalStyle
+        && modalStyle.backgroundColor === 'rgb(249, 242, 221)' && modalStyle.fontFamily.indexOf('YaHei') >= 0 ? 'ok' : 'FAIL(no-modal)'));
       const cancelBtn = modal ? modal.querySelector('[data-act="cancel"]') : null;
       if (cancelBtn) cancelBtn.click();
       bars = document.querySelectorAll('.bar.draft');

@@ -25,7 +25,7 @@
 
 ### 全年总览视图 / Year Overview
 
-![全年总览视图 - Year Overview](docs/screenshots/year-view.png)
+![全年总览视图 - Year Overview](docs/screenshots/year-overview.png)
 
 **中文**：12 个月纵向排列、横向固定 37 列网格；事项以彩色横条覆盖对应日期区间，全年计划一目了然。
 
@@ -33,7 +33,9 @@
 
 ### 空白年度视图 / Empty Year View
 
-![空白年度视图 - Empty Year View](docs/screenshots/blank-year.png)
+![空白年度视图 - Empty Year View](docs/screenshots/blank-zh.png)
+
+![空白年度视图 - Empty Year View](docs/screenshots/blank-en.png)
 
 **中文**：新的一年的干净网格，点击任意日期格即可开始规划。
 
@@ -41,7 +43,9 @@
 
 ### 添加事项弹窗 / Add-Event Dialog
 
-![添加事项弹窗 - Add-Event Dialog](docs/screenshots/add-dialog.png)
+![添加事项弹窗 - Add-Event Dialog](docs/screenshots/add-dialog-zh.png)
+
+![添加事项弹窗 - Add-Event Dialog](docs/screenshots/add-dialog-en.png)
 
 **中文**：双击草稿条或点击「添加」弹出表单，填写名称、备注并选择颜色；颜色面板包含「最近使用」与 5 组预设色板。
 
@@ -49,7 +53,9 @@
 
 ### 新建周期事项弹窗 / Recurring-Event Dialog
 
-![新建周期事项弹窗 - Recurring-Event Dialog](docs/screenshots/recurring-dialog.png)
+![新建周期事项弹窗 - Recurring-Event Dialog](docs/screenshots/recurring-dialog-zh.png)
+
+![新建周期事项弹窗 - Recurring-Event Dialog](docs/screenshots/recurring-dialog-en.png)
 
 **中文**：按起始/结束日期与重复间隔天数批量生成周期事项，并可同时设置颜色。
 

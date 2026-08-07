@@ -8,15 +8,15 @@
   'use strict';
 
   const DATE_AREA = 18;
-  const BAR_HEIGHT = 14;
-  const BAR_SLOT = 16;
+  const BAR_HEIGHT = 18;
+  const BAR_SLOT = 20; // 横条加高后，条与条之间的空隙仍保持 2px（20 - 18）
   // 单元格最小高度：恰好容纳 3 根横条（0-3 条时保持此高度，不收缩）。
   const MIN_ROW_HEIGHT = DATE_AREA + 3 * BAR_SLOT + 4; // 70
   const LABEL_WIDTH = 64;
   const HEADER_HEIGHT = 26;
   // 横条宽度达到该值才显示名称文字：单日横条宽度约 20~46px，
   // 只要空间能容纳至少一个字符就显示（不足则截断为省略号）。
-  const TEXT_MIN_WIDTH = 20;
+  const TEXT_MIN_WIDTH = 24;
 
   // 根据横条底色亮度选择文字颜色：底色偏深用白色，偏浅用黑色。
   function isLightColor(hex) {

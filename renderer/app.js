@@ -297,6 +297,8 @@
       console.log('SMOKE_SINGLE_BAR_TEXT ' + (barText && barText.textContent === '单日测试' ? 'ok' : 'FAIL(text=' + (barText ? barText.textContent : 'none') + ')'));
       const barTextColor = singleBar ? getComputedStyle(singleBar).color : null;
       console.log('SMOKE_BAR_TEXT_COLOR ' + (barTextColor === 'rgb(255, 255, 255)' ? 'ok' : 'FAIL(' + barTextColor + ')'));
+      const barStyle = singleBar ? getComputedStyle(singleBar) : null;
+      console.log('SMOKE_BAR_SIZE ' + (singleBar && singleBar.style.height === '18px' && barStyle && barStyle.fontSize === '12px' ? 'ok' : 'FAIL(h=' + (singleBar ? singleBar.style.height : 'none') + ' f=' + (barStyle ? barStyle.fontSize : 'none') + ')'));
 
       const cell = document.querySelector('.cell.valid[data-date="2026-01-01"]');
       if (!cell) {

@@ -200,7 +200,7 @@ body {
 .bar.draft { background: rgba(156, 91, 78, 0.16) !important; border: 1px dashed #9c5b4e; color: #6e3d33; cursor: default; }
 .bar.preview { opacity: 0.8; border: 1px dashed #111827; }
 .bar.selected { opacity: 0.8; border: 1px dashed #111827; }
-.bar-text { display: inline-block; overflow: hidden; text-overflow: ellipsis; max-width: 100%; position: relative; z-index: 2; }
+.bar-text { display: inline-block; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .bar-days {
   position: absolute;
   top: 50%;

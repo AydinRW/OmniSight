@@ -429,7 +429,11 @@
       const longRect = longBar ? longBar.getBoundingClientRect() : null;
       const daysRect = longDaysEl ? longDaysEl.getBoundingClientRect() : null;
       const daysInside = longRect && daysRect && daysRect.left >= longRect.left && daysRect.right <= longRect.right + 1;
-      console.log('SMOKE_SOLID_DAYS ' + (longDaysEl && longDaysEl.textContent === '10' && longDaysStyle.color === 'rgb(249, 242, 221)' && daysInside ? 'ok' : 'FAIL(inside=' + !!daysInside + ')'));
+      const longTextSpan = longBar ? longBar.querySelector('.bar-text') : null;
+      const spanRect = longTextSpan ? longTextSpan.getBoundingClientRect() : null;
+      const noOverlap = spanRect && daysRect && spanRect.right <= daysRect.left + 1;
+      const limited = longTextSpan && longRect && parseFloat(getComputedStyle(longTextSpan).maxWidth) < longRect.width;
+      console.log('SMOKE_SOLID_DAYS ' + (longDaysEl && longDaysEl.textContent === '10' && longDaysStyle.color === 'rgb(249, 242, 221)' && daysInside && noOverlap && limited ? 'ok' : 'FAIL(inside=' + !!daysInside + ' noOverlap=' + !!noOverlap + ' limited=' + !!limited + ')'));
       const shortBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-short') === 0);
       console.log('SMOKE_SHORT_NO_DAYS ' + (shortBar && !shortBar.querySelector('.bar-days') ? 'ok' : 'FAIL'));
 

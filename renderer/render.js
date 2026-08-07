@@ -267,6 +267,8 @@
           el.style.height = BAR_HEIGHT + 'px';
           el.style.background = b.draft ? '' : b.color;
           el.style.color = b.draft ? '' : (isLightColor(b.color) ? '#000000' : '#ffffff');
+          const days = u.diffDays(b.start, b.end) + 1;
+          const hasDayLabel = (b.draft && days >= 2) || (!b.draft && days >= 5);
           if (width >= TEXT_MIN_WIDTH && !b.draft) {
             let span = el.querySelector('.bar-text');
             if (!span) {
@@ -275,13 +277,14 @@
               el.appendChild(span);
             }
             span.textContent = b.name || '';
+            // 若长条末尾有天数数字，名称最多占 N-1 格宽度（末尾1格留给数字），超出省略号截断
+            span.style.maxWidth = (!b.draft && days >= 5) ? (width - this.colWidth) + 'px' : '100%';
           } else {
             const span = el.querySelector('.bar-text');
             if (span) span.remove();
           }
           // 天数标注：草稿≥2天、正式事项≥5天，在长条最右端最后一格居中显示；草稿保留到提交。
-          const days = u.diffDays(b.start, b.end) + 1;
-          const showDays = ((b.draft && days >= 2) || (!b.draft && days >= 5)) && seg.segEnd === b.end;
+          const showDays = hasDayLabel && seg.segEnd === b.end;
           let daysEl = el.querySelector('.bar-days');
           if (showDays) {
             if (!daysEl) {

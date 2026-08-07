@@ -1,59 +1,112 @@
-# OmniSight
-A linear annual desktop calendar built for structured long-term planning, milestone tracking and personalized schedule management.
+# OmniSight · 线性日历 (Linear Calendar)
 
-## Project Overview
-OmniSight is an Electron-powered Windows desktop calendar tool designed around a **full-year linear layout** (12 months displayed in one scrollable page), tailored for personal annual stage planning, periodic task tracking, and cross-day event arrangement.
+> 一款 Windows 桌面线性年历应用 —— 一年一页，纵览全年。
+> A Windows desktop linear annual calendar — the whole year on one page.
 
-This is currently an **early initial prototype (V1 Alpha)**. Core functional frameworks are implemented, and continuous optimization, feature expansion and experience polishing will be carried out in subsequent iterations.
+---
 
-## Core Design Concept
-Different from traditional monthly/weekly calendar apps, OmniSight lays out the entire calendar year on a single scrollable page. It visualizes your whole-year plans intuitively, making it easier to arrange long-term goals, phased study plans, recurring routines and multi-day continuous events.
+## 简介 / Introduction
 
-## Current Implemented Features
-### 1. Layout & View System
-- Full-year static layout matching the linear calendar template: Months arranged vertically from Jan to Dec, weekdays laid out horizontally in a fixed cycle
-- Vertical scrollable single-page year view: Cells auto-expand vertically if multiple tasks exist in one date, no content truncation
-- Year switching function: Independent data storage for each year, schedules from different years are isolated without conflict
-- Gray disabled placeholder for invalid dates; themed background colors for specified months for visual distinction
+**中文**：OmniSight 是一款基于 Electron 的 Windows 桌面日历软件，采用「线性年历」布局：12 个月纵向排列，横向固定 37 列（周一~周日循环），整年在一个可滚动的页面内完整呈现。软件支持跨天连续事项、周期批量事项、拖拽绘制、批量删除、悬浮预览、双击编辑与本地按年份存储，适合用于年度规划、阶段目标、周期性任务和长期事项管理。
 
-### 2. Two Modes to Create Events
-#### Mode 1: Drag-to-draw event bars (Draft & Confirm workflow)
-1. Click a single cell or drag horizontally across continuous dates to generate a dashed preview bar (for single-day or cross-day events)
-2. Hold `Ctrl` + multi-click to create multiple independent single-day draft bars for scattered dates
-3. Unconfirmed draft bars will disappear automatically if clicking blank areas or other cells (abandon draft easily)
-4. Confirm drafted bars via the sidebar button to fill event name, notes and custom color; preview dashed bars will turn into solid persistent bars
-5. Single cell supports vertical stacking of multiple event bars; cross-day events render as a single seamless long bar across relevant cells
+**English**: OmniSight is an Electron-based Windows desktop calendar app built around a **linear annual layout**: 12 months are stacked vertically across a fixed 37-column weekday grid (Mon–Sun cycling), so the entire year fits on a single scrollable page. It supports cross-day continuous events, recurring batch events, drag-to-draw creation, batch deletion, hover previews, double-click editing, and per-year local storage — ideal for annual planning, phase goals, recurring routines, and long-term milestones.
 
-#### Mode 2: Scheduled recurring batch events
-Create periodic repeating tasks via a dedicated button: fill in event name, start date, end date and repeat interval (days).
-The program automatically calculates all matching dates and generates corresponding single-day event bars in batches (e.g., Start: Jan 1, interval: 2 days → valid dates: Jan 1, Jan 4, Jan 7... until exceeding the end date).
+## 核心设计理念 / Core Design Concept
 
-### 3. Basic Interaction & Data Persistence
-- Hover over any event bar to preview full event name and remarks
-- Double-click solid event bars to edit content/color; right-click to delete single or entire cross-day events
-- All schedules saved locally as JSON files, separated by year; data remains intact after software restart
+**中文**：与传统「月历/周历」不同，OmniSight 把全年日期一次性铺开：纵向是 12 个月，横向是固定的周循环列组，年份之间数据相互隔离。这种布局让全年的计划分布一目了然，无需翻页即可规划长期目标、阶段计划、周期任务与跨天连续事项。
 
-## Tech Stack
-- Framework: Electron (HTML / CSS / Vanilla JavaScript)
-- Runtime: Node.js (local file read/write for data persistence)
-- Target Platform: Windows 10 / Windows 11
+**English**: Unlike traditional monthly/weekly calendars, OmniSight lays out the whole year at once — 12 months vertically, a fixed weekday grid horizontally, with each year's data stored separately. This makes your year-long plan visible at a glance, so you can arrange long-term goals, phased plans, recurring routines, and multi-day events without paging around.
 
-## Roadmap & Future Iterations
-This prototype lays the foundation, and further updates will cover:
-1. Visual optimization: Custom calendar themes, tag classification for event categories
-2. Reminder system: Desktop pop-up alerts for upcoming scheduled events
-3. Data utility: Schedule export (CSV/Markdown), milestone marking & annual review statistics
-4. Advanced planning tools: Goal breakdown, phase progress tracking, study plan templates
-5. Compatibility: Minor layout adaptation for high-DPI screens, shortcut customization
+## 功能特性 / Features
 
-## Installation (Alpha Version)
-1. Clone this repository to your local machine
-2. Ensure Node.js is installed on your device
+| 功能 / Feature | 说明 / Description |
+| --- | --- |
+| 全年单页视图 | 12 个月纵向排列、固定 37 列网格，垂直滚动，不分页。Full-year single-page view with a fixed 37-column grid. |
+| 年份切换 | 上一年/下一年按钮；数据按年份分文件夹隔离。Year switching with per-year isolated data. |
+| 拖拽绘制草稿 | 单击或拖拽生成虚线草稿条；Ctrl+单击多选；点击空白/Esc 作废；双击草稿条直接弹出添加。Dashed draft bars via click/drag; Ctrl+click multi-select; Esc or click-elsewhere to discard; double-click a draft to add. |
+| 跨天连续横条 | 同月跨格连续、跨月分段延续；一条事项是一个整体对象，可整体编辑/移动/删除。Continuous cross-day/month bars as single objects. |
+| 泳道堆叠 | 同一日期多条事项自动分泳道堆叠，互不遮挡；不重叠事项共享同一泳道。Lane-based stacking without overlap. |
+| 周期批量事项 | 按名称、起止日期、间隔天数批量生成；保留系列关联，可整体编辑/删除。Recurring batch events with series linkage. |
+| 悬浮预览 | 悬停横条显示完整名称、备注与日期。Hover preview shows full name, notes, and dates. |
+| 编辑与删除 | 双击编辑文字/颜色；右键删除单条或整条；拖动整条移动。Double-click to edit; right-click to delete; drag to move. |
+| 批量删除 | 顶部「批量删除」进入多选模式，单击多选横条，完成/取消。Batch-delete mode with multi-select. |
+| 颜色系统 | 自绘光谱面板 + 最近使用 5 色 + 5 组预设色板，在添加/新建/编辑弹窗统一可用。Custom spectrum picker, recent colors, and 5 preset palettes. |
+| 本地存储 | JSON 文件按年份保存，重启不丢失。Local JSON storage per year; data survives restarts. |
+
+## 界面与操作 / Usage
+
+### 顶部工具栏 / Top Bar
+
+**中文**：
+- **◀ / ▶**：切换上一年 / 下一年
+- **添加**：把当前虚线草稿正式提交为事项（弹出名称/备注/颜色表单；双击草稿条效果相同）
+- **新建事项**：批量生成周期事项（名称、起始年月日、结束年月日、重复间隔天数）
+- **批量删除**：进入多选模式，此时按钮切换为「完成 / 取消」
+
+**English**:
+- **◀ / ▶**: Switch to the previous / next year
+- **添加 (Add)**: Commit the current dashed drafts as real events (opens a name/notes/color form; double-clicking a draft bar does the same)
+- **新建事项 (New Event)**: Generate recurring events in batches (name, start date, end date, repeat interval in days)
+- **批量删除 (Batch Delete)**: Enter multi-select mode; the buttons switch to "Done / Cancel"
+
+### 创建事项 / Creating Events
+
+**中文**：
+1. 单击某个有效日期格 → 生成该日的单日虚线草稿条；横向拖拽 → 生成跨天草稿条（可跨月）
+2. 按住 `Ctrl` 多次单击 → 追加多条独立单日草稿
+3. 点击页面空白处或按 `Esc` → 草稿全部作废
+4. 点击「添加」或双击草稿条 → 填写名称、备注、颜色并确认 → 草稿转为实体横条
+
+**English**:
+1. Click a valid date cell to create a single-day dashed draft; drag horizontally to create a cross-day draft (months can be crossed)
+2. Hold `Ctrl` and click multiple cells to append several independent single-day drafts
+3. Click blank space or press `Esc` to discard all drafts
+4. Click "Add" or double-click a draft bar, fill in name / notes / color, and confirm — the draft becomes a solid bar
+
+### 管理事项 / Managing Events
+
+**中文**：悬停横条查看完整信息；双击横条编辑名称/备注/颜色（周期系列可整条修改）；右键删除单条或整条序列；按住左键拖动整条平移（可跨月/跨年）；「批量删除」模式下单击多选后点「完成」一次性删除。
+
+**English**: Hover a bar to preview full details; double-click to edit name/notes/color (series can be edited as a whole); right-click to delete a single item or an entire series; drag a bar to move it (across months/years); in batch-delete mode, click to multi-select bars and press "Done" to delete them all at once.
+
+### 周期事项说明 / Recurring Events
+
+**中文**：「新建事项」按起始日期起每隔 N 天生成一个单日事项，直到结束日期（含首尾）。生成条目与手动绘制条目外观一致，并保持系列关联，可对整条系列统一编辑或删除。
+
+**English**: "New Event" generates single-day items every N days from the start date through the end date (inclusive). Generated items look identical to manually drawn ones and stay linked as a series, allowing whole-series edits or deletion.
+
+## 技术栈 / Tech Stack
+
+- **框架 / Framework**: Electron（HTML / CSS / Vanilla JavaScript）
+- **运行时 / Runtime**: Node.js（本地文件读写）
+- **目标平台 / Target Platform**: Windows 10 / Windows 11
+
+## 安装与运行 / Installation & Running
+
+**中文**：
+1. 克隆仓库到本地
+2. 确保已安装 Node.js
+3. 运行 `npm install` 安装依赖
+4. `npm start` 启动开发版；`npm run build` 打包便携版 exe（产物在 `dist/`）
+
+**English**:
+1. Clone the repository
+2. Make sure Node.js is installed
 3. Run `npm install` to install dependencies
-4. Launch via `npm start` for development, or package to standalone `.exe` for permanent use
+4. Run `npm start` for development, or `npm run build` to package a portable `.exe` (output in `dist/`)
 
-## Contribution
-Issues, feature suggestions and feedback are welcome via GitHub Issues. As the project evolves from the initial prototype, constructive input will help shape subsequent versions of OmniSight.
+## 数据存储 / Data Storage
 
-## License
+**中文**：所有日历数据以 JSON 文件保存在应用数据目录（便携版为 exe 所在目录，开发版为项目根目录）下的 `data/<年份>/items.json`，按年份分文件夹隔离；「最近使用颜色」保存在 `data/recent-colors.json`。备份或迁移时直接复制整个 `data` 文件夹即可。
+
+**English**: All calendar data is stored as JSON files under the app data directory (`data/<year>/items.json`, where the data folder sits next to the portable exe or in the project root for development), isolated by year. Recently used colors are saved in `data/recent-colors.json`. To back up or migrate, simply copy the whole `data` folder.
+
+## 许可证 / License
+
 MIT License
+
+## 维护与更新 / Maintenance & Roadmap
+
+**中文**：作者（AydinRW）将在 **2027 年继续维护并更新本软件**，后续计划包括：提醒系统、数据导出（CSV/Markdown）、自定义主题与标签分类、年度统计、快捷键自定义与高分屏适配等。欢迎通过 GitHub Issues 提交建议与反馈。
+
+**English**: The author (AydinRW) **will continue to maintain and update this software in 2027**. Planned improvements include a reminder system, data export (CSV/Markdown), custom themes and tag categories, annual statistics, shortcut customization, and high-DPI adaptation. Suggestions and feedback are welcome via GitHub Issues.

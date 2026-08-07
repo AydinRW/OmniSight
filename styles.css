@@ -27,7 +27,7 @@ body {
   text-align: right;
   line-height: 1.35;
 }
-.app-title { font-size: 12px; color: #681414; }
+.app-title { font-size: 12px; color: #681414; white-space: nowrap; }
 .app-subtitle { font-size: 10px; color: #681414; }
 #year-label { min-width: 70px; text-align: center; font-size: 18px; font-weight: 700; }
 .btn {
@@ -39,6 +39,7 @@ body {
   cursor: pointer;
   font-size: 13px;
   font-weight: 700;
+  white-space: nowrap;
 }
 .btn:hover { background: #8b4f43; }
 .btn.primary { background: #648c69; }

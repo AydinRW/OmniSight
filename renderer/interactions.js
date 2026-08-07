@@ -9,6 +9,10 @@
 
   const DRAG_THRESHOLD = 4;
 
+  function tt(key, params) {
+    return (typeof window !== 'undefined' && window.I18n && window.I18n.t) ? window.I18n.t(key, params) : '';
+  }
+
   function init(opts) {
     const renderer = opts.renderer;
     const store = opts.store;
@@ -256,7 +260,7 @@
     async function deleteFlow(item, scope) {
       try {
         if (scope === 'series') {
-          const ok = await dialogs.confirmDialog('确定删除整条周期序列？将删除该系列在全部年份中生成的所有事项。');
+          const ok = await dialogs.confirmDialog(tt('deleteSeriesConfirm'));
           if (!ok) return;
           await store.deleteSeriesAndMembers(item.seriesId);
         } else {
@@ -269,13 +273,13 @@
     }
 
     function openItemMenu(item, x, y) {
-      const actions = [{ label: '编辑…', onClick: () => openEditFlow(item) }];
+      const actions = [{ label: tt('ctxEdit'), onClick: () => openEditFlow(item) }];
       if (item.seriesId) {
-        actions.push({ label: '删除此条', danger: true, onClick: () => deleteFlow(item, 'single') });
-        actions.push({ label: '删除整条序列', danger: true, onClick: () => deleteFlow(item, 'series') });
+        actions.push({ label: tt('ctxDeleteThis'), danger: true, onClick: () => deleteFlow(item, 'single') });
+        actions.push({ label: tt('ctxDeleteSeries'), danger: true, onClick: () => deleteFlow(item, 'series') });
       } else {
         actions.push({
-          label: item.start === item.end ? '删除' : '删除整条事项',
+          label: item.start === item.end ? tt('ctxDelete') : tt('ctxDeleteItem'),
           danger: true,
           onClick: () => deleteFlow(item, 'single')
         });

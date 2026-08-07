@@ -12,5 +12,7 @@ contextBridge.exposeInMainWorld('calendarAPI', {
   updateSeries: (seriesId, patch) => ipcRenderer.invoke('calendar:updateSeries', seriesId, patch),
   getDataDir: () => ipcRenderer.invoke('calendar:getDataDir'),
   getRecentColors: () => ipcRenderer.invoke('calendar:getRecentColors'),
-  setRecentColors: (list) => ipcRenderer.invoke('calendar:setRecentColors', list)
+  setRecentColors: (list) => ipcRenderer.invoke('calendar:setRecentColors', list),
+  getSettings: () => ipcRenderer.invoke('calendar:getSettings'),
+  setSettings: (settings) => ipcRenderer.invoke('calendar:setSettings', settings)
 });

@@ -22,6 +22,8 @@
     updateSeries: (seriesId, patch) => api().updateSeries(seriesId, patch),
     getDataDir: () => api().getDataDir(),
     getRecentColors: () => api().getRecentColors(),
-    setRecentColors: (list) => api().setRecentColors(list)
+    setRecentColors: (list) => api().setRecentColors(list),
+    getSettings: () => api().getSettings(),
+    setSettings: (settings) => api().setSettings(settings)
   };
 });

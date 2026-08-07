@@ -22,9 +22,10 @@
         <button id="batch-done-btn" class="btn">完成</button>
         <button id="batch-cancel-btn" class="btn">取消</button>
       </div>
+      <button id="lang-btn" class="btn" title="切换语言">EN</button>
       <div class="topbar-spacer"></div>
       <div class="app-brand">
-        <div class="app-title">OmniSight · 线性日历</div>
+        <div id="app-title" class="app-title">OmniSight · 线性日历</div>
         <div class="app-subtitle">by Aydin</div>
       </div>
     </div>
@@ -32,10 +33,11 @@
       <div id="scroll-body"></div>
     </div>
     <div id="statusbar">
-      <span class="statusbar-hint">拖拽可绘制事项；Ctrl+单击多选；Esc 取消草稿；双击编辑；右键删除。</span>
+      <span id="statusbar-hint" class="statusbar-hint">拖拽可绘制事项；Ctrl+单击多选；Esc 取消草稿；双击编辑；右键删除。</span>
       <span id="data-dir" class="data-dir"></span>
     </div>
   </div>
+  <script src="renderer/i18n.js"></script>
   <script src="renderer/date-utils.js"></script>
   <script src="renderer/store.js"></script>
   <script src="renderer/render.js"></script>

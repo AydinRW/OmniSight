@@ -90,10 +90,18 @@
     });
   }
 
+  function tt(key, params) {
+    return (typeof window !== 'undefined' && window.I18n && window.I18n.t) ? window.I18n.t(key, params) : '';
+  }
+
+  function lang() {
+    return (typeof window !== 'undefined' && window.I18n && window.I18n.getLang) ? window.I18n.getLang() : 'zh';
+  }
+
   function openForm(title, fields, opts) {
     const o = opts || {};
-    const okText = o.okText || '确定';
-    const cancelText = o.cancelText || '取消';
+    const okText = o.okText || tt('ok');
+    const cancelText = o.cancelText || tt('cancel');
     const validateFn = o.validate || function () { return ''; };
     return new Promise((resolve) => {
       const overlay = document.createElement('div');
@@ -120,7 +128,7 @@
           html += '<input type="hidden" data-key="' + f.key + '" value="' + esc(cur) + '">';
           const recent = getRecentColors();
           if (recent.length) {
-            html += '<div class="color-recent-label">最近使用</div><div class="color-swatches">';
+            html += '<div class="color-recent-label">' + esc(tt('recentLabel')) + '</div><div class="color-swatches">';
             for (const c of recent) {
               html += '<button type="button" class="swatch recent" data-color="' + esc(c) + '" style="background:' + esc(c) + '" title="' + esc(c) + '"></button>';
             }
@@ -330,31 +338,31 @@
   }
 
   function openAddDialog(draftCount) {
-    return openForm('添加事项（' + draftCount + ' 条草稿）', [
-      { key: 'name', label: '事项名称', type: 'text', required: true, placeholder: '例如：项目周报' },
-      { key: 'notes', label: '备注', type: 'textarea', value: '' },
-      { key: 'color', label: '横条颜色', type: 'colors', value: DEFAULT_COLOR }
+    return openForm(tt('addTitle', { n: draftCount }), [
+      { key: 'name', label: tt('fieldName'), type: 'text', required: true, placeholder: tt('namePlaceholderAdd') },
+      { key: 'notes', label: tt('fieldNotes'), type: 'textarea', value: '' },
+      { key: 'color', label: tt('fieldColor'), type: 'colors', value: DEFAULT_COLOR }
     ], {
-      okText: '确认添加',
-      validate: (v) => (v.name ? '' : '请填写事项名称')
+      okText: tt('confirmAdd'),
+      validate: (v) => (v.name ? '' : tt('nameRequired'))
     });
   }
 
   function openNewItemDialog(defaults) {
     const d = defaults || {};
-    return openForm('新建周期事项', [
-      { key: 'name', label: '事项名称', type: 'text', required: true, value: d.name || '', placeholder: '例如：每日晨会' },
-      { key: 'start', label: '起始年月日', type: 'date', required: true, value: d.start || '' },
-      { key: 'end', label: '结束年月日', type: 'date', required: true, value: d.end || '' },
-      { key: 'interval', label: '重复间隔天数', type: 'number', required: true, value: d.interval != null ? d.interval : 1, min: 1, placeholder: 'N' },
-      { key: 'color', label: '横条颜色', type: 'colors', value: d.color || DEFAULT_COLOR }
+    return openForm(tt('newItemTitle'), [
+      { key: 'name', label: tt('fieldName'), type: 'text', required: true, value: d.name || '', placeholder: tt('namePlaceholderNew') },
+      { key: 'start', label: tt('fieldStart'), type: 'date', required: true, value: d.start || '' },
+      { key: 'end', label: tt('fieldEnd'), type: 'date', required: true, value: d.end || '' },
+      { key: 'interval', label: tt('fieldInterval'), type: 'number', required: true, value: d.interval != null ? d.interval : 1, min: 1, placeholder: 'N' },
+      { key: 'color', label: tt('fieldColor'), type: 'colors', value: d.color || DEFAULT_COLOR }
     ], {
-      okText: '生成事项',
+      okText: tt('generate'),
       validate: (v) => {
-        if (!v.name) return '请填写事项名称';
-        if (!v.start || !v.end) return '请填写起始/结束日期';
-        if (v.end < v.start) return '结束日期不能早于起始日期';
-        if (!/^\d+$/.test(v.interval) || Number(v.interval) < 1) return '重复间隔天数须为大于等于 1 的整数';
+        if (!v.name) return tt('nameRequired');
+        if (!v.start || !v.end) return tt('dateRequired');
+        if (v.end < v.start) return tt('endBeforeStart');
+        if (!/^\d+$/.test(v.interval) || Number(v.interval) < 1) return tt('intervalInvalid');
         return '';
       }
     });
@@ -362,25 +370,25 @@
 
   function openEditDialog(item, isSeriesMember) {
     const fields = [
-      { key: 'name', label: '事项名称', type: 'text', required: true, value: item.name },
-      { key: 'notes', label: '备注', type: 'textarea', value: item.notes || '' },
-      { key: 'color', label: '横条颜色', type: 'colors', value: item.color || DEFAULT_COLOR }
+      { key: 'name', label: tt('fieldName'), type: 'text', required: true, value: item.name },
+      { key: 'notes', label: tt('fieldNotes'), type: 'textarea', value: item.notes || '' },
+      { key: 'color', label: tt('fieldColor'), type: 'colors', value: item.color || DEFAULT_COLOR }
     ];
     if (isSeriesMember) {
       fields.push({
         key: 'scope',
-        label: '修改范围',
+        label: tt('scope'),
         type: 'radio',
         value: 'single',
         options: [
-          { value: 'single', label: '仅此条' },
-          { value: 'series', label: '整条周期序列' }
+          { value: 'single', label: tt('scopeSingle') },
+          { value: 'series', label: tt('scopeSeries') }
         ]
       });
     }
-    return openForm('编辑事项', fields, {
-      okText: '保存',
-      validate: (v) => (v.name ? '' : '请填写事项名称')
+    return openForm(tt('editTitle'), fields, {
+      okText: tt('save'),
+      validate: (v) => (v.name ? '' : tt('nameRequired'))
     });
   }
 
@@ -390,10 +398,10 @@
       overlay.className = 'modal-overlay';
       const box = document.createElement('div');
       box.className = 'modal-box';
-      box.innerHTML = '<div class="modal-title">确认操作</div>'
+      box.innerHTML = '<div class="modal-title">' + esc(tt('confirmTitle')) + '</div>'
         + '<p style="line-height:1.7;margin-bottom:14px">' + esc(message) + '</p>'
-        + '<div class="modal-actions"><button type="button" class="btn" data-act="cancel">取消</button>'
-        + '<button type="button" class="btn danger-bg" data-act="ok">确定删除</button></div>';
+        + '<div class="modal-actions"><button type="button" class="btn" data-act="cancel">' + esc(tt('cancel')) + '</button>'
+        + '<button type="button" class="btn danger-bg" data-act="ok">' + esc(tt('okDelete')) + '</button></div>';
       overlay.appendChild(box);
       document.body.appendChild(overlay);
 
@@ -433,6 +441,10 @@
 
   function fmtDate(iso) {
     const p = iso.split('-').map(Number);
+    if (lang() === 'en') {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return months[p[1] - 1] + ' ' + p[2] + ', ' + p[0];
+    }
     return p[0] + '年' + p[1] + '月' + p[2] + '日';
   }
 
@@ -440,6 +452,14 @@
     if (start === end) return fmtDate(start);
     const s = start.split('-').map(Number);
     const e = end.split('-').map(Number);
+    if (lang() === 'en') {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const ms = months[s[1] - 1];
+      const me = months[e[1] - 1];
+      if (s[0] === e[0] && s[1] === e[1]) return ms + ' ' + s[2] + ' – ' + e[2] + ', ' + s[0];
+      if (s[0] === e[0]) return ms + ' ' + s[2] + ' – ' + me + ' ' + e[2] + ', ' + s[0];
+      return ms + ' ' + s[2] + ', ' + s[0] + ' – ' + me + ' ' + e[2] + ', ' + e[0];
+    }
     if (s[0] === e[0] && s[1] === e[1]) return s[0] + '年' + s[1] + '月' + s[2] + '日 – ' + e[2] + '日';
     if (s[0] === e[0]) return s[0] + '年' + s[1] + '月' + s[2] + '日 – ' + e[1] + '月' + e[2] + '日';
     return fmtDate(start) + ' – ' + fmtDate(end);

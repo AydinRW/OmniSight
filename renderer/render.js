@@ -116,7 +116,9 @@
       for (let c = 0; c < totalCols; c++) {
         const hc = document.createElement('div');
         hc.className = 'header-cell';
-        hc.textContent = u.WEEKDAY_LABELS[c % 7];
+        hc.textContent = (window.I18n && window.I18n.t)
+          ? window.I18n.t('weekday')[c % 7]
+          : u.WEEKDAY_LABELS[c % 7];
         this.headerGrid.appendChild(hc);
       }
 
@@ -126,7 +128,9 @@
         row.className = 'month-row';
         const label = document.createElement('div');
         label.className = 'month-label';
-        label.textContent = month + '月';
+        label.textContent = (window.I18n && window.I18n.t)
+          ? window.I18n.t('month')[m]
+          : (month + '月');
         const gridEl = document.createElement('div');
         gridEl.className = 'row-grid q' + (Math.floor(m / 3) + 1);
         const layer = document.createElement('div');

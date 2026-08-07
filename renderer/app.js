@@ -46,6 +46,10 @@
     const batchDoneBtn = document.getElementById('batch-done-btn');
     const batchCancelBtn = document.getElementById('batch-cancel-btn');
     const dataDirEl = document.getElementById('data-dir');
+    const langBtn = document.getElementById('lang-btn');
+    const appTitleEl = document.getElementById('app-title');
+    const statusbarHintEl = document.getElementById('statusbar-hint');
+    let dataDirPath = '';
 
     function updateAddBtn() {
       addBtn.disabled = state.drafts.length === 0;
@@ -53,8 +57,22 @@
 
     function notifyError(err) {
       try {
-        window.alert('操作失败：' + (err && err.message ? err.message : String(err)));
+        window.alert(window.I18n.t('opFail') + (err && err.message ? err.message : String(err)));
       } catch (_) { /* ignore */ }
+    }
+
+    function applyLanguage() {
+      const L = window.I18n;
+      addBtn.textContent = L.t('add');
+      newBtn.textContent = L.t('newItem');
+      batchDeleteBtn.textContent = L.t('batchDelete');
+      batchDoneBtn.textContent = L.t('done');
+      batchCancelBtn.textContent = L.t('cancel');
+      langBtn.textContent = L.t('langTarget');
+      langBtn.title = L.t('langToggle');
+      appTitleEl.textContent = L.t('appTitle');
+      statusbarHintEl.textContent = L.t('hint');
+      if (dataDirPath) dataDirEl.textContent = L.t('dataDirPrefix') + dataDirPath;
     }
 
     async function loadYear() {
@@ -135,6 +153,14 @@
       }
     });
 
+    langBtn.addEventListener('click', () => {
+      const next = window.I18n.getLang() === 'zh' ? 'en' : 'zh';
+      window.I18n.setLang(next);
+      store.setSettings({ lang: next }).catch((err) => console.error(err));
+      applyLanguage();
+      renderer.render(state.year);
+    });
+
     newBtn.addEventListener('click', async () => {
       const today = u.todayISO();
       const res = await dialogs.openNewItemDialog({
@@ -176,7 +202,8 @@
 
     try {
       const dir = await store.getDataDir();
-      dataDirEl.textContent = '数据目录：' + dir;
+      dataDirPath = dir;
+      dataDirEl.textContent = window.I18n.t('dataDirPrefix') + dir;
     } catch (_) { /* ignore */ }
 
     window.CalendarInteractions.init({
@@ -192,6 +219,18 @@
     });
 
     window.addEventListener('resize', debounce(() => renderer.refresh(), 120));
+
+    try {
+      const settings = await store.getSettings();
+      window.I18n.setLang(settings.lang);
+    } catch (_) { /* ignore */ }
+
+    if (window.location.hash === '#smoke') {
+      try {
+        await store.setSettings({ lang: 'zh' });
+        window.I18n.setLang('zh');
+      } catch (_) { /* ignore */ }
+    }
 
     try {
       dialogs.setRecentColors(await store.getRecentColors());
@@ -214,6 +253,7 @@
     }
 
     await loadYear();
+    applyLanguage();
     console.log('APP_READY year=' + state.year + ' items=' + state.data.items.length);
 
     if (window.location.hash === '#smoke') {
@@ -429,6 +469,20 @@
       console.log('SMOKE_NEWITEM_COLOR ' + (newModalColor ? 'ok' : 'FAIL'));
       const cancelNew = newModal ? newModal.querySelector('[data-act="cancel"]') : null;
       if (cancelNew) cancelNew.click();
+
+      // 中英文切换
+      const langBtnEl = document.getElementById('lang-btn');
+      const addBtnEl = document.getElementById('add-btn');
+      const newItemBtnEl = document.getElementById('new-item-btn');
+      langBtnEl.click();
+      const headerFirst = document.querySelector('.header-cell').textContent;
+      const janLabelEl = document.querySelector('#scroll-body > .month-row:nth-child(2) > .month-label').textContent;
+      console.log('SMOKE_LANG_EN ' + (addBtnEl.textContent === 'Add' && newItemBtnEl.textContent === 'New Event' && headerFirst === 'Mon' && janLabelEl === 'Jan' ? 'ok' : 'FAIL(' + addBtnEl.textContent + ',' + headerFirst + ',' + janLabelEl + ')'));
+      window.CalendarStore.getSettings().then((s) => {
+        console.log('SMOKE_LANG_SHAPE ' + (s && (s.lang === 'zh' || s.lang === 'en') ? 'ok' : 'FAIL'));
+      }).catch((err) => console.error('SMOKE_LANG_ERR ' + (err && err.message ? err.message : String(err))));
+      langBtnEl.click();
+      console.log('SMOKE_LANG_ZH ' + (addBtnEl.textContent === '添加' && document.querySelector('.header-cell').textContent === '周一' ? 'ok' : 'FAIL'));
 
       console.log('SMOKE_INTERACTION_DONE');
     } catch (err) {

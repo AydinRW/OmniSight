@@ -259,6 +259,36 @@ ipcMain.handle('calendar:setRecentColors', (_e, list) => {
   return arr;
 });
 
+const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
+
+function normalizeSettings(raw) {
+  return { lang: raw && raw.lang === 'en' ? 'en' : 'zh' };
+}
+
+ipcMain.handle('calendar:getSettings', () => {
+  try {
+    return normalizeSettings(JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8')));
+  } catch (_) {
+    return { lang: 'zh' };
+  }
+});
+
+ipcMain.handle('calendar:setSettings', (_e, raw) => {
+  const s = normalizeSettings(raw);
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    const tmp = SETTINGS_FILE + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(s), 'utf8');
+    try {
+      fs.renameSync(tmp, SETTINGS_FILE);
+    } catch (_) {
+      fs.writeFileSync(SETTINGS_FILE, JSON.stringify(s), 'utf8');
+      try { fs.unlinkSync(tmp); } catch (__) { /* ignore */ }
+    }
+  } catch (_) { /* ignore */ }
+  return s;
+});
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1440,

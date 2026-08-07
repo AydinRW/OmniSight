@@ -46,9 +46,10 @@
     const batchDoneBtn = document.getElementById('batch-done-btn');
     const batchCancelBtn = document.getElementById('batch-cancel-btn');
     const dataDirEl = document.getElementById('data-dir');
-    const langBtn = document.getElementById('lang-btn');
     const appTitleEl = document.getElementById('app-title');
     const statusbarHintEl = document.getElementById('statusbar-hint');
+    const menuBar = document.getElementById('menubar');
+    const menuDropdown = document.getElementById('menu-dropdown');
     let dataDirPath = '';
 
     function updateAddBtn() {
@@ -68,11 +69,13 @@
       batchDeleteBtn.textContent = L.t('batchDelete');
       batchDoneBtn.textContent = L.t('done');
       batchCancelBtn.textContent = L.t('cancel');
-      langBtn.textContent = L.t('langTarget');
-      langBtn.title = L.t('langToggle');
       appTitleEl.textContent = L.t('appTitle');
       statusbarHintEl.textContent = L.t('hint');
       if (dataDirPath) dataDirEl.textContent = L.t('dataDirPrefix') + dataDirPath;
+      menuBar.querySelector('[data-menu="options"]').textContent = L.t('menuOptions');
+      menuBar.querySelector('[data-menu="settings"]').textContent = L.t('menuSettings');
+      menuBar.querySelector('[data-menu="help"]').textContent = L.t('menuHelp');
+      if (!menuDropdown.hidden) openMenu(menuDropdown.dataset.menu);
     }
 
     async function loadYear() {
@@ -153,12 +156,73 @@
       }
     });
 
-    langBtn.addEventListener('click', () => {
-      const next = window.I18n.getLang() === 'zh' ? 'en' : 'zh';
-      window.I18n.setLang(next);
-      store.setSettings({ lang: next }).catch((err) => console.error(err));
+    function closeMenu() {
+      menuDropdown.hidden = true;
+    }
+
+    function switchLang(lang) {
+      window.I18n.setLang(lang);
+      store.setSettings({ lang }).catch((err) => console.error(err));
       applyLanguage();
       renderer.render(state.year);
+    }
+
+    function openMenu(key) {
+      const item = menuBar.querySelector('[data-menu="' + key + '"]');
+      const rect = item.getBoundingClientRect();
+      menuDropdown.innerHTML = '';
+      const L = window.I18n;
+      let items = [];
+      if (key === 'settings') {
+        items = [
+          { type: 'lang', lang: 'zh', label: L.t('langZh') },
+          { type: 'lang', lang: 'en', label: L.t('langEn') }
+        ];
+      } else if (key === 'options') {
+        items = [{ type: 'disabled', label: L.t('menuComingSoon') }];
+      } else if (key === 'help') {
+        items = [{ type: 'action', action: 'about', label: L.t('menuAbout') }];
+      }
+      for (const it of items) {
+        const el = document.createElement('div');
+        el.className = 'menu-drop-item' + (it.type === 'disabled' ? ' disabled' : '');
+        if (it.type === 'lang') {
+          el.classList.add('lang-item');
+          el.dataset.lang = it.lang;
+          if (window.I18n.getLang() === it.lang) el.classList.add('checked');
+        }
+        el.textContent = it.label;
+        el.addEventListener('click', () => {
+          if (it.type === 'disabled') return;
+          closeMenu();
+          if (it.type === 'lang') switchLang(it.lang);
+          else if (it.action === 'about') dialogs.infoDialog(L.t('menuAbout'), L.t('aboutText'));
+        });
+        menuDropdown.appendChild(el);
+      }
+      menuDropdown.dataset.menu = key;
+      menuDropdown.style.left = rect.left + 'px';
+      menuDropdown.style.top = (rect.bottom + 2) + 'px';
+      menuDropdown.hidden = false;
+    }
+
+    menuBar.addEventListener('click', (e) => {
+      const item = e.target.closest('.menu-item');
+      if (!item) return;
+      const key = item.dataset.menu;
+      const isOpen = !menuDropdown.hidden && menuDropdown.dataset.menu === key;
+      closeMenu();
+      if (!isOpen) openMenu(key);
+    });
+
+    document.addEventListener('mousedown', (e) => {
+      if (!e.target.closest || (!e.target.closest('#menubar') && !e.target.closest('#menu-dropdown'))) {
+        closeMenu();
+      }
+    }, true);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMenu();
     });
 
     newBtn.addEventListener('click', async () => {
@@ -470,18 +534,27 @@
       const cancelNew = newModal ? newModal.querySelector('[data-act="cancel"]') : null;
       if (cancelNew) cancelNew.click();
 
-      // 中英文切换
-      const langBtnEl = document.getElementById('lang-btn');
+      // 菜单栏与中英文切换
+      const menuSettingsEl = document.querySelector('[data-menu="settings"]');
+      const langBtnGone = document.getElementById('lang-btn') === null;
+      console.log('SMOKE_MENU_BAR ' + (langBtnGone && menuSettingsEl && document.querySelector('[data-menu="options"]') && document.querySelector('[data-menu="help"]') && menuSettingsEl.textContent === '设置' ? 'ok' : 'FAIL'));
       const addBtnEl = document.getElementById('add-btn');
       const newItemBtnEl = document.getElementById('new-item-btn');
-      langBtnEl.click();
+      const zhBtnH = getComputedStyle(newItemBtnEl).height;
+      menuSettingsEl.click();
+      const engItem = Array.from(document.querySelectorAll('#menu-dropdown .lang-item')).find((el) => el.dataset.lang === 'en');
+      engItem.click();
       const headerFirst = document.querySelector('.header-cell').textContent;
       const janLabelEl = document.querySelector('#scroll-body > .month-row:nth-child(2) > .month-label').textContent;
+      const btnH = getComputedStyle(newItemBtnEl).height;
       console.log('SMOKE_LANG_EN ' + (addBtnEl.textContent === 'Add' && newItemBtnEl.textContent === 'New Event' && headerFirst === 'Mon' && janLabelEl === 'Jan' ? 'ok' : 'FAIL(' + addBtnEl.textContent + ',' + headerFirst + ',' + janLabelEl + ')'));
+      console.log('SMOKE_BTN_HEIGHT ' + (btnH === zhBtnH && Math.abs(parseFloat(btnH) - 32) < 0.5 ? 'ok' : 'FAIL(' + btnH + ' vs ' + zhBtnH + ')'));
       window.CalendarStore.getSettings().then((s) => {
         console.log('SMOKE_LANG_SHAPE ' + (s && (s.lang === 'zh' || s.lang === 'en') ? 'ok' : 'FAIL'));
       }).catch((err) => console.error('SMOKE_LANG_ERR ' + (err && err.message ? err.message : String(err))));
-      langBtnEl.click();
+      menuSettingsEl.click();
+      const zhItem = Array.from(document.querySelectorAll('#menu-dropdown .lang-item')).find((el) => el.dataset.lang === 'zh');
+      zhItem.click();
       console.log('SMOKE_LANG_ZH ' + (addBtnEl.textContent === '添加' && document.querySelector('.header-cell').textContent === '周一' ? 'ok' : 'FAIL'));
 
       console.log('SMOKE_INTERACTION_DONE');

@@ -427,6 +427,39 @@
     });
   }
 
+  function infoDialog(title, message) {
+    return new Promise((resolve) => {
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      const box = document.createElement('div');
+      box.className = 'modal-box';
+      box.innerHTML = '<div class="modal-title">' + esc(title) + '</div>'
+        + '<p style="line-height:1.7;margin-bottom:14px;white-space:pre-line">' + esc(message) + '</p>'
+        + '<div class="modal-actions"><button type="button" class="btn primary" data-act="ok">' + esc(tt('ok')) + '</button></div>';
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
+
+      function done() {
+        document.body.removeChild(overlay);
+        document.removeEventListener('keydown', onKey, true);
+        resolve(true);
+      }
+
+      function onKey(e) {
+        if (e.key === 'Escape') {
+          e.stopPropagation();
+          done();
+        }
+      }
+
+      box.querySelector('[data-act="ok"]').addEventListener('click', done);
+      overlay.addEventListener('mousedown', (e) => {
+        if (e.target === overlay) done();
+      });
+      document.addEventListener('keydown', onKey, true);
+    });
+  }
+
   let tooltipEl = null;
 
   function ensureTooltip() {
@@ -553,6 +586,7 @@
     openNewItemDialog,
     openEditDialog,
     confirmDialog,
+    infoDialog,
     showTooltip,
     moveTooltip,
     hideTooltip,

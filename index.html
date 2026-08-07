@@ -7,6 +7,12 @@
 </head>
 <body>
   <div id="app">
+    <div id="menubar">
+      <button type="button" class="menu-item" data-menu="options">选项</button>
+      <button type="button" class="menu-item" data-menu="settings">设置</button>
+      <button type="button" class="menu-item" data-menu="help">帮助</button>
+    </div>
+    <div id="menu-dropdown" hidden></div>
     <div id="topbar">
       <div class="year-switcher">
         <button id="prev-year" class="btn" title="上一年">◀</button>
@@ -22,7 +28,6 @@
         <button id="batch-done-btn" class="btn">完成</button>
         <button id="batch-cancel-btn" class="btn">取消</button>
       </div>
-      <button id="lang-btn" class="btn" title="切换语言">EN</button>
       <div class="topbar-spacer"></div>
       <div class="app-brand">
         <div id="app-title" class="app-title">OmniSight · 线性日历</div>

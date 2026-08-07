@@ -145,6 +145,6 @@ MIT License
 
 ## 维护与更新 / Maintenance & Roadmap
 
-**中文**：作者（AydinRW）将在 **2027 年继续维护并更新本软件**，后续计划包括：提醒系统、数据导出（CSV/Markdown）、自定义主题与标签分类、年度统计、快捷键自定义与高分屏适配等。欢迎通过 GitHub Issues 提交建议与反馈。
+**中文**：作者（AydinRW）将在 **2027 年继续维护并更新本软件**，后续计划包括：自定义主题、其他语言、新增板块（类似于看板）、快捷键自定义与快捷键缩放等。欢迎通过 GitHub Issues 提交建议与反馈。
 
-**English**: The author (AydinRW) **will continue to maintain and update this software in 2027**. Planned improvements include a reminder system, data export (CSV/Markdown), custom themes and tag categories, annual statistics, shortcut customization, and high-DPI adaptation. Suggestions and feedback are welcome via GitHub Issues.
+**English**: The author (AydinRW) **will continue to maintain and update this software in 2027**. Planned improvements include custom themes, additional languages, new sections (similar to a Kanban board), shortcut customization and shortcut-based zoom, and more. Suggestions and feedback are welcome via GitHub Issues.

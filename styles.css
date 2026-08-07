@@ -200,7 +200,20 @@ body {
 .bar.draft { background: rgba(156, 91, 78, 0.16) !important; border: 1px dashed #9c5b4e; color: #6e3d33; cursor: default; }
 .bar.preview { opacity: 0.8; border: 1px dashed #111827; }
 .bar.selected { opacity: 0.8; border: 1px dashed #111827; }
-.bar-text { display: inline-block; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.bar-text { display: inline-block; overflow: hidden; text-overflow: ellipsis; max-width: 100%; position: relative; z-index: 2; }
+.bar-days {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+}
+.bar.draft .bar-days { color: #681414; }
+.bar:not(.draft) .bar-days { color: #f9f2dd; }
 .action-buttons[hidden] { display: none; }
 .modal-overlay {
   position: fixed;

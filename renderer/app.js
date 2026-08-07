@@ -302,15 +302,35 @@
 
     if (window.location.hash === '#smoke') {
       try {
-        await store.putItems([{
-          id: 'smoke-fixture',
-          name: '单日测试',
-          notes: '',
-          color: '#3b82f6',
-          start: '2026-02-01',
-          end: '2026-02-01',
-          seriesId: null
-        }]);
+        await store.putItems([
+          {
+            id: 'smoke-fixture',
+            name: '单日测试',
+            notes: '',
+            color: '#3b82f6',
+            start: '2026-02-01',
+            end: '2026-02-01',
+            seriesId: null
+          },
+          {
+            id: 'smoke-long',
+            name: 'Long Event',
+            notes: '',
+            color: '#3b82f6',
+            start: '2026-04-01',
+            end: '2026-04-10',
+            seriesId: null
+          },
+          {
+            id: 'smoke-short',
+            name: 'Short Event',
+            notes: '',
+            color: '#3b82f6',
+            start: '2026-05-01',
+            end: '2026-05-03',
+            seriesId: null
+          }
+        ]);
       } catch (err) {
         console.error('SMOKE_FIXTURE_ERROR ' + (err && err.message ? err.message : String(err)));
       }
@@ -403,6 +423,12 @@
       console.log('SMOKE_BAR_TEXT_COLOR ' + (barTextColor === 'rgb(255, 255, 255)' ? 'ok' : 'FAIL(' + barTextColor + ')'));
       const barStyle = singleBar ? getComputedStyle(singleBar) : null;
       console.log('SMOKE_BAR_SIZE ' + (singleBar && singleBar.style.height === '18px' && barStyle && barStyle.fontSize === '12px' ? 'ok' : 'FAIL(h=' + (singleBar ? singleBar.style.height : 'none') + ' f=' + (barStyle ? barStyle.fontSize : 'none') + ')'));
+      const longBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-long') === 0);
+      const longDaysEl = longBar ? longBar.querySelector('.bar-days') : null;
+      const longDaysStyle = longDaysEl ? getComputedStyle(longDaysEl) : null;
+      console.log('SMOKE_SOLID_DAYS ' + (longDaysEl && longDaysEl.textContent === '10' && longDaysStyle.color === 'rgb(249, 242, 221)' ? 'ok' : 'FAIL'));
+      const shortBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-short') === 0);
+      console.log('SMOKE_SHORT_NO_DAYS ' + (shortBar && !shortBar.querySelector('.bar-days') ? 'ok' : 'FAIL'));
 
       const cell = document.querySelector('.cell.valid[data-date="2026-01-01"]');
       if (!cell) {
@@ -452,6 +478,30 @@
       console.log('SMOKE_BUTTONS_ADD ' + (addEnabled.backgroundColor === 'rgb(100, 140, 105)' && addEnabled.color === 'rgb(249, 242, 221)' && addEnabled.fontWeight === '700' ? 'ok' : 'FAIL'));
       const dbStyle = bars[0] ? getComputedStyle(bars[0]) : null;
       console.log('SMOKE_DRAFT_COLOR ' + (dbStyle && dbStyle.borderTopColor === 'rgb(156, 91, 78)' && dbStyle.backgroundColor === 'rgba(156, 91, 78, 0.16)' ? 'ok' : 'FAIL'));
+
+      // 拖拽草稿天数：≥2天在右端最后一格居中显示，松开后保留至提交；单日不显示
+      const mar1 = document.querySelector('.cell.valid[data-date="2026-03-01"]');
+      const mar5 = document.querySelector('.cell.valid[data-date="2026-03-05"]');
+      const mr1 = mar1.getBoundingClientRect();
+      const mr5 = mar5.getBoundingClientRect();
+      const mx1 = mr1.left + mr1.width / 2, my1 = mr1.top + mr1.height / 2;
+      const mx5 = mr5.left + mr5.width / 2, my5 = mr5.top + mr5.height / 2;
+      mar1.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerId: 7, clientX: mx1, clientY: my1 }));
+      window.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 7, clientX: mx5, clientY: my5 }));
+      const dragDaysEl = document.querySelector('.bar.draft .bar-days');
+      console.log('SMOKE_DRAG_DAYS ' + (dragDaysEl && dragDaysEl.textContent === '5' && getComputedStyle(dragDaysEl).color === 'rgb(104, 20, 20)' ? 'ok' : 'FAIL(' + (dragDaysEl ? dragDaysEl.textContent : 'none') + ')'));
+      window.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 7, clientX: mx5, clientY: my5 }));
+      const dragDaysKeep = document.querySelector('.bar.draft .bar-days');
+      console.log('SMOKE_DRAG_DAYS_KEEP ' + (dragDaysKeep && dragDaysKeep.textContent === '5' ? 'ok' : 'FAIL'));
+      const clickAt3 = (el, opts) => {
+        const r = el.getBoundingClientRect();
+        const o = Object.assign({ bubbles: true, button: 0, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 }, opts || {});
+        el.dispatchEvent(new PointerEvent('pointerdown', o));
+        el.dispatchEvent(new PointerEvent('pointerup', o));
+        el.dispatchEvent(new MouseEvent('click', o));
+      };
+      clickAt3(mar1, { pointerId: 8 });
+      console.log('SMOKE_SINGLE_NO_DAYS ' + (document.querySelector('.bar.draft .bar-days') === null ? 'ok' : 'FAIL'));
 
       // 最近使用颜色：自定义颜色计入，预设颜色不计入。
       console.log('SMOKE_RECENT_BEGIN');

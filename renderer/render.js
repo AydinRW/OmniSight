@@ -231,7 +231,7 @@
           const colStart = this.columnOfDate(u.parseISO(segStart));
           const colEnd = this.columnOfDate(u.parseISO(segEnd));
           if (colStart < 0 || colEnd < 0) continue;
-          segsByRow[r].push({ b, slot, colStart, colEnd });
+          segsByRow[r].push({ b, slot, colStart, colEnd, segStart, segEnd });
           if (slot > maxSlotByRow[r]) maxSlotByRow[r] = slot;
         }
       }
@@ -278,6 +278,21 @@
           } else {
             const span = el.querySelector('.bar-text');
             if (span) span.remove();
+          }
+          // 天数标注：草稿≥2天、正式事项≥5天，在长条最右端最后一格居中显示；草稿保留到提交。
+          const days = u.diffDays(b.start, b.end) + 1;
+          const showDays = ((b.draft && days >= 2) || (!b.draft && days >= 5)) && seg.segEnd === b.end;
+          let daysEl = el.querySelector('.bar-days');
+          if (showDays) {
+            if (!daysEl) {
+              daysEl = document.createElement('span');
+              daysEl.className = 'bar-days';
+              el.appendChild(daysEl);
+            }
+            daysEl.textContent = String(days);
+            daysEl.style.left = ((colEnd + 0.5) * this.colWidth) + 'px';
+          } else if (daysEl) {
+            daysEl.remove();
           }
           this.barData.set(key, {
             item: b.item || null,

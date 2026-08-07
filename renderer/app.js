@@ -426,7 +426,10 @@
       const longBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-long') === 0);
       const longDaysEl = longBar ? longBar.querySelector('.bar-days') : null;
       const longDaysStyle = longDaysEl ? getComputedStyle(longDaysEl) : null;
-      console.log('SMOKE_SOLID_DAYS ' + (longDaysEl && longDaysEl.textContent === '10' && longDaysStyle.color === 'rgb(249, 242, 221)' ? 'ok' : 'FAIL'));
+      const longRect = longBar ? longBar.getBoundingClientRect() : null;
+      const daysRect = longDaysEl ? longDaysEl.getBoundingClientRect() : null;
+      const daysInside = longRect && daysRect && daysRect.left >= longRect.left && daysRect.right <= longRect.right + 1;
+      console.log('SMOKE_SOLID_DAYS ' + (longDaysEl && longDaysEl.textContent === '10' && longDaysStyle.color === 'rgb(249, 242, 221)' && daysInside ? 'ok' : 'FAIL(inside=' + !!daysInside + ')'));
       const shortBar = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-short') === 0);
       console.log('SMOKE_SHORT_NO_DAYS ' + (shortBar && !shortBar.querySelector('.bar-days') ? 'ok' : 'FAIL'));
 
@@ -489,7 +492,11 @@
       mar1.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerId: 7, clientX: mx1, clientY: my1 }));
       window.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 7, clientX: mx5, clientY: my5 }));
       const dragDaysEl = document.querySelector('.bar.draft .bar-days');
-      console.log('SMOKE_DRAG_DAYS ' + (dragDaysEl && dragDaysEl.textContent === '5' && getComputedStyle(dragDaysEl).color === 'rgb(104, 20, 20)' ? 'ok' : 'FAIL(' + (dragDaysEl ? dragDaysEl.textContent : 'none') + ')'));
+      const dragBarEl = document.querySelector('.bar.draft');
+      const dragRect = dragBarEl ? dragBarEl.getBoundingClientRect() : null;
+      const dragDaysRect = dragDaysEl ? dragDaysEl.getBoundingClientRect() : null;
+      const dragInside = dragRect && dragDaysRect && dragDaysRect.left >= dragRect.left && dragDaysRect.right <= dragRect.right + 1;
+      console.log('SMOKE_DRAG_DAYS ' + (dragDaysEl && dragDaysEl.textContent === '5' && getComputedStyle(dragDaysEl).color === 'rgb(104, 20, 20)' && dragInside ? 'ok' : 'FAIL(' + (dragDaysEl ? dragDaysEl.textContent : 'none') + ' inside=' + !!dragInside + ')'));
       window.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 7, clientX: mx5, clientY: my5 }));
       const dragDaysKeep = document.querySelector('.bar.draft .bar-days');
       console.log('SMOKE_DRAG_DAYS_KEEP ' + (dragDaysKeep && dragDaysKeep.textContent === '5' ? 'ok' : 'FAIL'));
@@ -502,6 +509,18 @@
       };
       clickAt3(mar1, { pointerId: 8 });
       console.log('SMOKE_SINGLE_NO_DAYS ' + (document.querySelector('.bar.draft .bar-days') === null ? 'ok' : 'FAIL'));
+      // 连续多步拖动探针：逐步从3月1日拖到3月5日
+      const probeSteps = [];
+      mar1.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerId: 9, clientX: mx1, clientY: my1 }));
+      for (let d = 2; d <= 5; d++) {
+        const cell = document.querySelector('.cell.valid[data-date="2026-03-0' + d + '"]');
+        const r = cell.getBoundingClientRect();
+        window.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 9, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 }));
+        const pb = document.querySelector('.bar.draft .bar-days');
+        probeSteps.push(pb ? pb.textContent : '-');
+      }
+      window.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 9, clientX: mx5, clientY: my5 }));
+      console.log('SMOKE_DRAG_STEPS ' + probeSteps.join(','));
 
       // 最近使用颜色：自定义颜色计入，预设颜色不计入。
       console.log('SMOKE_RECENT_BEGIN');

@@ -290,7 +290,8 @@
               el.appendChild(daysEl);
             }
             daysEl.textContent = String(days);
-            daysEl.style.left = ((colEnd + 0.5) * this.colWidth) + 'px';
+            // span 是长条的子元素，left 相对长条自身：最后一格中心 = (colEnd - colStart + 0.5) * colWidth
+            daysEl.style.left = ((colEnd - colStart + 0.5) * this.colWidth) + 'px';
           } else if (daysEl) {
             daysEl.remove();
           }

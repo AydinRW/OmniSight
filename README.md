@@ -17,6 +17,44 @@
 
 **English**: Unlike traditional monthly/weekly calendars, OmniSight lays out the whole year at once — 12 months vertically, a fixed weekday grid horizontally, with each year's data stored separately. This makes your year-long plan visible at a glance, so you can arrange long-term goals, phased plans, recurring routines, and multi-day events without paging around.
 
+## 截图展示 / Screenshots
+
+**中文**：以下为软件主要界面截图（截图中数据均为演示示例，非真实日程）。
+
+**English**: Screenshots of the main interfaces below (all data shown is demo content, not real schedules).
+
+### 全年总览视图 / Year Overview
+
+![全年总览视图 - Year Overview](docs/screenshots/year-view.png)
+
+**中文**：12 个月纵向排列、横向固定 37 列网格；事项以彩色横条覆盖对应日期区间，全年计划一目了然。
+
+**English**: 12 months stacked vertically on a fixed 37-column weekday grid; events appear as colored bars spanning their date ranges, so the whole year is visible at a glance.
+
+### 空白年度视图 / Empty Year View
+
+![空白年度视图 - Empty Year View](docs/screenshots/blank-year.png)
+
+**中文**：新的一年的干净网格，点击任意日期格即可开始规划。
+
+**English**: A clean grid of a brand-new year — click any date cell to start planning.
+
+### 添加事项弹窗 / Add-Event Dialog
+
+![添加事项弹窗 - Add-Event Dialog](docs/screenshots/add-dialog.png)
+
+**中文**：双击草稿条或点击「添加」弹出表单，填写名称、备注并选择颜色；颜色面板包含「最近使用」与 5 组预设色板。
+
+**English**: Double-click a draft bar or press "Add" to open the form — fill in the name, notes, and pick a color; the picker includes recently used colors and 5 preset palettes.
+
+### 新建周期事项弹窗 / Recurring-Event Dialog
+
+![新建周期事项弹窗 - Recurring-Event Dialog](docs/screenshots/recurring-dialog.png)
+
+**中文**：按起始/结束日期与重复间隔天数批量生成周期事项，并可同时设置颜色。
+
+**English**: Batch-generate recurring events by start/end date and repeat interval, with a color chosen at the same time.
+
 ## 功能特性 / Features
 
 | 功能 / Feature | 说明 / Description |

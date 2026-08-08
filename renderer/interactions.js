@@ -121,6 +121,38 @@
       };
       state.stamp.active = true;
       onStampChange();
+      // 印台吞入模板：原事项条从日历中移除
+      store.deleteItems([item.id]).then(onDataChanged).catch(onError);
+    }
+
+    function contrastColor(hex) {
+      const m = /^#([0-9a-fA-F]{6})$/.exec(String(hex || ''));
+      if (!m) return '#f9f2dd';
+      const n = parseInt(m[1], 16);
+      const r = (n >> 16) & 255;
+      const g = (n >> 8) & 255;
+      const b = n & 255;
+      return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? '#000000' : '#f9f2dd';
+    }
+
+    function setPadOver(isOver) {
+      const pad = document.getElementById('stamp-pad');
+      if (!pad) return;
+      pad.classList.toggle('over', isOver);
+      const mini = pad.querySelector('.stamp-mini');
+      if (!mini) return;
+      if (isOver && drag && drag.mode === 'move') {
+        const item = state.data.items.find((i) => i.id === drag.itemId);
+        if (item) {
+          mini.style.background = item.color;
+          mini.style.color = contrastColor(item.color);
+          mini.textContent = item.name || '';
+          mini.hidden = false;
+        }
+      } else {
+        mini.hidden = true;
+        mini.textContent = '';
+      }
     }
 
     function onPointerMove(e) {
@@ -139,6 +171,12 @@
         state.drafts[drag.draftIndex].end = a <= b ? b : a;
         updateBars();
       } else if (drag.mode === 'move') {
+        const padEl = document.getElementById('stamp-pad');
+        const padRect = padEl ? padEl.getBoundingClientRect() : null;
+        const overPad = padRect && e.clientX >= padRect.left && e.clientX <= padRect.right
+          && e.clientY >= padRect.top && e.clientY <= padRect.bottom;
+        setPadOver(overPad);
+        if (overPad) return; // 移入印台：保持移动预览不变，仅切换印台悬停态
         const hit = renderer.pointToCell(e.clientX, e.clientY);
         if (!hit || !hit.valid) return;
         const delta = u.diffDays(drag.anchorDate, hit.dateISO);
@@ -171,6 +209,7 @@
           }
         }
       }
+      setPadOver(false);
       suppressClear = drag.started;
       drag = null;
       state.moving = null;
@@ -215,7 +254,7 @@
         const barEl = e.target.closest('.bar');
         if (barEl) {
           const bar = renderer.barData.get(barEl.dataset.barKey);
-          if (bar && bar.item && bar.item.stamped && matchesStampTemplate(bar.item)) {
+          if (bar && bar.item && matchesStampTemplate(bar.item)) {
             store.deleteItems([bar.item.id]).then(onDataChanged).catch(onError);
           }
           return;

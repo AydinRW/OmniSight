@@ -361,12 +361,13 @@ body {
 .days-value { min-width: 30px; text-align: center; font-weight: 700; color: #681414; }
 .days-stepper .btn:disabled { opacity: 0.45; cursor: default; }
 .stamp-pad {
-  min-width: 86px;
+  min-width: 30px;
   height: 34px;
-  padding: 0 10px;
+  padding: 0 2px;
   border: 1.5px dashed #681414;
   background: rgba(156, 91, 78, 0.45);
   border-radius: 6px;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -381,12 +382,38 @@ body {
   background: #9c5b4e;
   border-style: solid;
 }
-.stamp-pad.active span { font-size: 10px; }
+.stamp-pad.over {
+  background: #9c5b4e;
+  border-style: solid;
+}
+.stamp-pad.over span { display: none; }
+.stamp-pad.active span {
+  font-size: 8px;
+  line-height: 1.3;
+  text-align: center;
+  white-space: normal;
+  padding: 0 2px;
+}
+.stamp-mini {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 18px;
+  border-radius: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 8px;
+  line-height: 18px;
+  padding: 0 3px;
+}
 body.stamp-mode {
-  cursor: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cg transform='translate(2,2)'%3E%3Crect x='0' y='4' width='20' height='20' rx='3' fill='%239c5b4e' stroke='%23f9f2dd' stroke-width='1.5'/%3E%3Crect x='9' y='0' width='2' height='6' fill='%23681414'/%3E%3Ccircle cx='10' cy='14' r='4' fill='%23f9f2dd'/%3E%3C/g%3E%3C/svg%3E") 4 4, crosshair;
+  cursor: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Crect x='10.5' y='1.5' width='3' height='6.5' rx='1.2' fill='%23681414'/%3E%3Crect x='3.5' y='8' width='17' height='10' rx='2.5' fill='%239c5b4e' stroke='%23f9f2dd' stroke-width='1.2'/%3E%3Crect x='6.5' y='17.5' width='11' height='2' rx='1' fill='%23f9f2dd'/%3E%3C/svg%3E") 12 12, crosshair;
 }
 body.stamp-mode .bar,
-body.stamp-mode .cell { cursor: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cg transform='translate(2,2)'%3E%3Crect x='0' y='4' width='20' height='20' rx='3' fill='%239c5b4e' stroke='%23f9f2dd' stroke-width='1.5'/%3E%3Crect x='9' y='0' width='2' height='6' fill='%23681414'/%3E%3Ccircle cx='10' cy='14' r='4' fill='%23f9f2dd'/%3E%3C/g%3E%3C/svg%3E") 4 4, crosshair;
+body.stamp-mode .cell { cursor: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Crect x='10.5' y='1.5' width='3' height='6.5' rx='1.2' fill='%23681414'/%3E%3Crect x='3.5' y='8' width='17' height='10' rx='2.5' fill='%239c5b4e' stroke='%23f9f2dd' stroke-width='1.2'/%3E%3Crect x='6.5' y='17.5' width='11' height='2' rx='1' fill='%23f9f2dd'/%3E%3C/svg%3E") 12 12, crosshair;
 }
 .tooltip {
   position: fixed;

@@ -85,11 +85,23 @@
       const active = state.stamp.active;
       document.body.classList.toggle('stamp-mode', active);
       stampPad.classList.toggle('active', active);
+      stampPad.classList.remove('over');
+      const mini = stampPad.querySelector('.stamp-mini');
+      if (mini) {
+        mini.hidden = true;
+        mini.textContent = '';
+      }
       stampPad.querySelector('span').textContent = active ? window.I18n.t('stampExitHint') : window.I18n.t('stampPad');
       newBtn.disabled = active;
       batchDeleteBtn.disabled = active;
       addBtn.disabled = active || state.drafts.length === 0;
       if (active) setBatchMode(false);
+      updateStampPadWidth();
+    }
+
+    function updateStampPadWidth() {
+      const w = renderer.colWidth;
+      if (w && w > 0) stampPad.style.width = Math.max(30, w) + 'px';
     }
 
     stampPad.addEventListener('click', () => {
@@ -309,7 +321,10 @@
       onError: notifyError
     });
 
-    window.addEventListener('resize', debounce(() => renderer.refresh(), 120));
+    window.addEventListener('resize', debounce(() => {
+      renderer.refresh();
+      updateStampPadWidth();
+    }, 120));
 
     try {
       const settings = await store.getSettings();
@@ -722,13 +737,20 @@
 
       // 盖章模式
       const stampPadEl = document.getElementById('stamp-pad');
-      console.log('SMOKE_PAD_DEFAULT ' + (stampPadEl && stampPadEl.textContent === '印台' && getComputedStyle(stampPadEl).borderTopStyle === 'dashed' ? 'ok' : 'FAIL'));
+      const cellW = document.querySelector('.cell.valid').getBoundingClientRect().width;
+      console.log('SMOKE_PAD_DEFAULT ' + (stampPadEl && stampPadEl.textContent === '印台' && getComputedStyle(stampPadEl).borderTopStyle === 'dashed' && Math.abs(stampPadEl.getBoundingClientRect().width - cellW) < 3 ? 'ok' : 'FAIL'));
       const longBarStamp = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-long') === 0);
       const lbs = longBarStamp.getBoundingClientRect();
       const padRect = stampPadEl.getBoundingClientRect();
       longBarStamp.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerId: 20, clientX: lbs.left + 5, clientY: lbs.top + 9 }));
       window.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 20, clientX: padRect.left + 10, clientY: padRect.top + 10 }));
+      const overState = stampPadEl.classList.contains('over') && !stampPadEl.querySelector('.stamp-mini').hidden;
+      const mr1b = mar1.getBoundingClientRect();
+      window.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 20, clientX: mr1b.left + mr1b.width / 2, clientY: mr1b.top + mr1b.height / 2 }));
+      const outState = !stampPadEl.classList.contains('over');
+      window.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 20, clientX: padRect.left + 10, clientY: padRect.top + 10 }));
       window.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 20, clientX: padRect.left + 10, clientY: padRect.top + 10 }));
+      console.log('SMOKE_STAMP_OVER ' + (overState && outState ? 'ok' : 'FAIL(over=' + overState + ' out=' + outState + ')'));
       const stampCursor = getComputedStyle(document.body).cursor;
       console.log('SMOKE_STAMP_LOAD ' + (document.body.classList.contains('stamp-mode') && stampPadEl.textContent === '再次点击此处退出盖章模式' && stampCursor.indexOf('url') >= 0 ? 'ok' : 'FAIL'));
       const stampCell = document.querySelector('.cell.valid[data-date="2026-06-01"]');
@@ -738,7 +760,8 @@
       stampCell.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: scr.left + scr.width / 2, clientY: scr.top + scr.height / 2 }));
       new Promise((r) => setTimeout(r, 300)).then(() => window.CalendarStore.loadYear(2026)).then((data) => {
         const stamped = data.items.find((i) => i.stamped === true);
-        console.log('SMOKE_STAMP_CREATE ' + (stamped && stamped.start === '2026-06-01' && stamped.end === '2026-06-10' && stamped.name === 'Long Event' ? 'ok' : 'FAIL'));
+        const sourceGone = !data.items.some((i) => i.id === 'smoke-long');
+        console.log('SMOKE_STAMP_CREATE ' + (stamped && stamped.start === '2026-06-01' && stamped.end === '2026-06-10' && stamped.name === 'Long Event' && sourceGone ? 'ok' : 'FAIL'));
         const stampedId = stamped ? stamped.id : null;
         const stampedBarEl = stampedId ? Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf(stampedId) === 0) : null;
         if (stampedBarEl) {

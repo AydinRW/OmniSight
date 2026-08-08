@@ -754,7 +754,7 @@
       window.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 20, clientX: padRect.left + 10, clientY: padRect.top + 10 }));
       console.log('SMOKE_STAMP_OVER ' + (overState && outState && ghostGone && miniText === '…' ? 'ok' : 'FAIL(over=' + overState + ' out=' + outState + ' ghost=' + ghostGone + ' mini=' + miniText + ')'));
       const stampCursor = getComputedStyle(document.body).cursor;
-      console.log('SMOKE_STAMP_LOAD ' + (document.body.classList.contains('stamp-mode') && stampPadEl.textContent === '再次点击此处退出盖章模式' && stampCursor.indexOf('url') >= 0 ? 'ok' : 'FAIL'));
+      console.log('SMOKE_STAMP_LOAD ' + (document.body.classList.contains('stamp-mode') && stampPadEl.textContent === '退出' && stampCursor.indexOf('url') >= 0 ? 'ok' : 'FAIL'));
       const stampCell = document.querySelector('.cell.valid[data-date="2026-06-01"]');
       const scr = stampCell.getBoundingClientRect();
       stampCell.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerId: 21, clientX: scr.left + scr.width / 2, clientY: scr.top + scr.height / 2 }));

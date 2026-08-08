@@ -104,7 +104,7 @@
       ctxDeleteThis: '删除此条',
       ctxDeleteSeries: '删除整条序列',
       stampPad: '印台',
-      stampExitHint: '再次点击此处退出盖章模式',
+      stampExitHint: '退出',
       weekday: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
       month: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
     },
@@ -204,7 +204,7 @@
       ctxDeleteThis: 'Delete this item',
       ctxDeleteSeries: 'Delete entire series',
       stampPad: 'Ink Pad',
-      stampExitHint: 'Click again to exit stamp mode',
+      stampExitHint: 'Exit',
       weekday: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     }

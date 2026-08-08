@@ -181,7 +181,10 @@
       } else if (key === 'options') {
         items = [{ type: 'disabled', label: L.t('menuComingSoon') }];
       } else if (key === 'help') {
-        items = [{ type: 'action', action: 'about', label: L.t('menuAbout') }];
+        items = [
+          { type: 'action', action: 'guide', label: L.t('menuHelpGuide') },
+          { type: 'action', action: 'about', label: L.t('menuAbout') }
+        ];
       }
       for (const it of items) {
         const el = document.createElement('div');
@@ -197,6 +200,7 @@
           closeMenu();
           if (it.type === 'lang') switchLang(it.lang);
           else if (it.action === 'about') dialogs.infoDialog(L.t('menuAbout'), L.t('aboutText'));
+          else if (it.action === 'guide') dialogs.openHelpDialog();
         });
         menuDropdown.appendChild(el);
       }
@@ -380,6 +384,7 @@
         + ' scrollW=' + sb.scrollWidth + ' clientW=' + sb.clientWidth
         + ' hasHScroll=' + (sb.scrollWidth > sb.clientWidth));
       console.log('SMOKE_LAYOUT_TOPBAR ' + (document.getElementById('sidebar') === null && document.querySelector('#topbar #add-btn') && document.querySelector('#topbar #new-item-btn') ? 'ok' : 'FAIL'));
+      console.log('SMOKE_BTN_TEXT_ZH ' + (document.getElementById('new-item-btn').textContent === '批量新增' && document.getElementById('batch-done-btn').textContent === '删除' ? 'ok' : 'FAIL'));
       const repoLink = document.querySelector('#scroll-body .repo-footer a');
       const repoFooterEl = document.querySelector('#scroll-body .repo-footer');
       const footerPad = repoFooterEl ? parseFloat(getComputedStyle(repoFooterEl).paddingTop) : 0;
@@ -556,6 +561,8 @@
       const modalStyle = modalBox ? getComputedStyle(modalBox) : null;
       console.log('SMOKE_DBLCLICK_DRAFT_DIALOG ' + (modal && modal.textContent.indexOf('添加事项') >= 0 && modalStyle
         && modalStyle.backgroundColor === 'rgb(249, 242, 221)' && modalStyle.fontFamily.indexOf('YaHei') >= 0 ? 'ok' : 'FAIL(no-modal)'));
+      const addNameInput = modalBox ? modalBox.querySelector('[data-key="name"]') : null;
+      console.log('SMOKE_ADD_PLACEHOLDER ' + (addNameInput && addNameInput.getAttribute('placeholder') === '例如：和派大星一起去抓水母～' ? 'ok' : 'FAIL'));
       const formCols = modalBox ? modalBox.querySelectorAll('.form-col') : [];
       const colorInRightCol = modalBox && modalBox.querySelector('.form-col:last-child .color-widget');
       const notesInLeftCol = modalBox && modalBox.querySelector('.form-col:first-child textarea');
@@ -622,6 +629,8 @@
       const newModal = document.querySelector('.modal-overlay');
       const newModalColor = newModal ? newModal.querySelector('.color-widget') : null;
       console.log('SMOKE_NEWITEM_COLOR ' + (newModalColor ? 'ok' : 'FAIL'));
+      const newNameInput = newModal ? newModal.querySelector('[data-key="name"]') : null;
+      console.log('SMOKE_RECURRING_PLACEHOLDER ' + (newNameInput && newNameInput.getAttribute('placeholder') === '例如：和派大星一起发呆' ? 'ok' : 'FAIL'));
       const recCols = newModal ? newModal.querySelectorAll('.form-col') : [];
       const recNotes = newModal && newModal.querySelector('.form-col:first-child textarea');
       console.log('SMOKE_RECURRING_2COL ' + (recCols.length === 2 && recNotes ? 'ok' : 'FAIL(' + recCols.length + ')'));
@@ -668,7 +677,7 @@
       const headerFirst = document.querySelector('.header-cell').textContent;
       const janLabelEl = document.querySelector('#scroll-body > .month-row:nth-child(2) > .month-label').textContent;
       const btnH = getComputedStyle(newItemBtnEl).height;
-      console.log('SMOKE_LANG_EN ' + (addBtnEl.textContent === 'Add' && newItemBtnEl.textContent === 'New Event' && headerFirst === 'Mon' && janLabelEl === 'Jan' ? 'ok' : 'FAIL(' + addBtnEl.textContent + ',' + headerFirst + ',' + janLabelEl + ')'));
+      console.log('SMOKE_LANG_EN ' + (addBtnEl.textContent === 'Add' && newItemBtnEl.textContent === 'Batch Add' && headerFirst === 'Mon' && janLabelEl === 'Jan' ? 'ok' : 'FAIL(' + addBtnEl.textContent + ',' + headerFirst + ',' + janLabelEl + ')'));
       console.log('SMOKE_BTN_HEIGHT ' + (btnH === zhBtnH && Math.abs(parseFloat(btnH) - 32) < 0.5 ? 'ok' : 'FAIL(' + btnH + ' vs ' + zhBtnH + ')'));
       window.CalendarStore.getSettings().then((s) => {
         console.log('SMOKE_LANG_SHAPE ' + (s && (s.lang === 'zh' || s.lang === 'en') ? 'ok' : 'FAIL'));
@@ -677,6 +686,16 @@
       const zhItem = Array.from(document.querySelectorAll('#menu-dropdown .lang-item')).find((el) => el.dataset.lang === 'zh');
       zhItem.click();
       console.log('SMOKE_LANG_ZH ' + (addBtnEl.textContent === '添加' && document.querySelector('.header-cell').textContent === '周一' ? 'ok' : 'FAIL'));
+      // 帮助菜单：使用教程
+      const helpMenuEl = document.querySelector('[data-menu="help"]');
+      helpMenuEl.click();
+      const guideItem = Array.from(document.querySelectorAll('#menu-dropdown .menu-drop-item')).find((el) => el.textContent === '使用教程');
+      guideItem.click();
+      const helpModal = document.querySelector('.modal-overlay');
+      const helpBody = helpModal ? helpModal.querySelector('.help-body') : null;
+      console.log('SMOKE_HELP_GUIDE ' + (helpBody && helpBody.textContent.indexOf('拖拽') >= 0 && helpBody.textContent.indexOf('批量删除') >= 0 && helpBody.textContent.indexOf('周期事项') >= 0 ? 'ok' : 'FAIL'));
+      const helpOk = helpModal ? helpModal.querySelector('[data-act="ok"]') : null;
+      if (helpOk) helpOk.click();
 
       console.log('SMOKE_INTERACTION_DONE');
     } catch (err) {

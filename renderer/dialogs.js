@@ -518,6 +518,44 @@
     });
   }
 
+  function openHelpDialog() {
+    const sections = (typeof window !== 'undefined' && window.I18n && window.I18n.t) ? window.I18n.t('helpSections') : [];
+    return new Promise((resolve) => {
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      const box = document.createElement('div');
+      box.className = 'modal-box help-box';
+      let html = '<div class="modal-title">' + esc(tt('menuHelp')) + '</div><div class="help-body">';
+      for (const s of (sections || [])) {
+        html += '<h3>' + esc(s.title) + '</h3>';
+        for (const line of (s.lines || [])) html += '<p>' + esc(line) + '</p>';
+      }
+      html += '</div><div class="modal-actions"><button type="button" class="btn primary" data-act="ok">' + esc(tt('ok')) + '</button></div>';
+      box.innerHTML = html;
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
+
+      function done() {
+        document.body.removeChild(overlay);
+        document.removeEventListener('keydown', onKey, true);
+        resolve(true);
+      }
+
+      function onKey(e) {
+        if (e.key === 'Escape') {
+          e.stopPropagation();
+          done();
+        }
+      }
+
+      box.querySelector('[data-act="ok"]').addEventListener('click', done);
+      overlay.addEventListener('mousedown', (e) => {
+        if (e.target === overlay) done();
+      });
+      document.addEventListener('keydown', onKey, true);
+    });
+  }
+
   let tooltipEl = null;
 
   function ensureTooltip() {
@@ -645,6 +683,7 @@
     openEditDialog,
     confirmDialog,
     infoDialog,
+    openHelpDialog,
     showTooltip,
     moveTooltip,
     hideTooltip,

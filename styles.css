@@ -257,6 +257,10 @@ body {
 .form-col .field:has(textarea) { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
 .form-col .field:has(textarea) textarea { flex: 1 1 auto; min-height: 40px; resize: none; }
 .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+.help-box { width: 580px; }
+.help-body { max-height: 60vh; overflow-y: auto; line-height: 1.8; padding-right: 4px; }
+.help-body h3 { font-size: 14px; color: #681414; margin: 14px 0 6px; }
+.help-body p { font-size: 13px; color: #681414; margin: 0 0 8px; }
 .field { display: block; margin-bottom: 12px; }
 .field-label { display: block; font-size: 12px; color: #681414; margin-bottom: 4px; }
 .field-label em { color: #dc2626; font-style: normal; }

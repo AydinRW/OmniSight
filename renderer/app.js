@@ -559,6 +559,7 @@
       const leftColW = modalBox && formCols[0] ? formCols[0].getBoundingClientRect().width : 0;
       const rightColW = modalBox && formCols[1] ? formCols[1].getBoundingClientRect().width : 0;
       console.log('SMOKE_COLOR_COMPACT ' + (rightColW > 0 && rightColW < leftColW ? 'ok' : 'FAIL(' + rightColW + ' vs ' + leftColW + ')'));
+      console.log('SMOKE_ADD_NO_STEPPER ' + (modalBox && !modalBox.querySelector('.days-stepper') ? 'ok' : 'FAIL'));
       const notesTa = modalBox ? modalBox.querySelector('.form-col:first-child textarea') : null;
       const notesTaStyle = notesTa ? getComputedStyle(notesTa) : null;
       const notesRect = notesTa ? notesTa.getBoundingClientRect() : null;
@@ -627,6 +628,28 @@
       console.log('SMOKE_RECURRING_ALIGN ' + (recAligned ? 'ok' : 'FAIL(d=' + (recNotesRect && recColorRect ? Math.abs(recNotesRect.bottom - recColorRect.bottom) : 'n/a') + ')'));
       const cancelNew = newModal ? newModal.querySelector('[data-act="cancel"]') : null;
       if (cancelNew) cancelNew.click();
+
+      // 编辑弹窗天数步进器
+      const longBarEdit = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-long') === 0);
+      const lbe = longBarEdit ? longBarEdit.getBoundingClientRect() : null;
+      if (lbe) {
+        longBarEdit.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, clientX: lbe.left + lbe.width / 2, clientY: lbe.top + lbe.height / 2 }));
+      }
+      const editModal = document.querySelector('.modal-overlay');
+      const editBox = editModal ? editModal.querySelector('.modal-box') : null;
+      const stepper = editBox ? editBox.querySelector('.days-stepper') : null;
+      const daysVal = editBox ? editBox.querySelector('.days-value') : null;
+      const daysMinus = editBox ? editBox.querySelector('.days-minus') : null;
+      const daysPlus = editBox ? editBox.querySelector('.days-plus') : null;
+      console.log('SMOKE_EDIT_STEPPER ' + (stepper && daysVal && daysVal.textContent === '10' && daysMinus && daysPlus ? 'ok' : 'FAIL'));
+      if (daysMinus) {
+        for (let i = 0; i < 9; i++) daysMinus.click();
+      }
+      console.log('SMOKE_STEPPER_MIN ' + (daysVal && daysVal.textContent === '1' && daysMinus.disabled ? 'ok' : 'FAIL(' + (daysVal ? daysVal.textContent : 'none') + ')'));
+      if (daysPlus) daysPlus.click();
+      console.log('SMOKE_STEPPER_PLUS ' + (daysVal && daysVal.textContent === '2' && !daysMinus.disabled ? 'ok' : 'FAIL(' + (daysVal ? daysVal.textContent : 'none') + ')'));
+      const editCancel = editBox ? editBox.querySelector('[data-act="cancel"]') : null;
+      if (editCancel) editCancel.click();
 
       // 菜单栏与中英文切换
       const menuSettingsEl = document.querySelector('[data-menu="settings"]');

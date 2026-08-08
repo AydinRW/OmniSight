@@ -98,6 +98,13 @@
     return (typeof window !== 'undefined' && window.I18n && window.I18n.getLang) ? window.I18n.getLang() : 'zh';
   }
 
+  function dayDiff(aISO, bISO) {
+    if (typeof window !== 'undefined' && window.DateUtils && window.DateUtils.diffDays) {
+      return window.DateUtils.diffDays(aISO, bISO);
+    }
+    return Math.round((Date.parse(bISO + 'T00:00:00') - Date.parse(aISO + 'T00:00:00')) / 86400000);
+  }
+
   function openForm(title, fields, opts) {
     const o = opts || {};
     const okText = o.okText || tt('ok');
@@ -169,6 +176,8 @@
           + '</div>';
       }
       html += '</div><p class="modal-error" hidden></p><div class="modal-actions">'
+        + (o.actionsLeft || '')
+        + '<div class="actions-spacer"></div>'
         + '<button type="button" class="btn" data-act="cancel">' + esc(cancelText) + '</button>'
         + '<button type="button" class="btn primary" data-act="ok">' + esc(okText) + '</button></div>';
       box.innerHTML = html;
@@ -287,6 +296,31 @@
         }
       }
       document.addEventListener('mousedown', onDocMousedown, true);
+      // 天数步进器（编辑弹窗底部左侧）：− 天数 ＋，最少 1 天。
+      const daysStepper = box.querySelector('.days-stepper');
+      if (daysStepper) {
+        const daysInput = daysStepper.querySelector('[data-key="days"]');
+        const valueEl = daysStepper.querySelector('.days-value');
+        const minusBtn = daysStepper.querySelector('.days-minus');
+        const plusBtn = daysStepper.querySelector('.days-plus');
+        function renderDays() {
+          const v = Number(daysInput.value) || 1;
+          valueEl.textContent = String(v);
+          minusBtn.disabled = v <= 1;
+        }
+        minusBtn.addEventListener('click', () => {
+          const v = Number(daysInput.value) || 1;
+          if (v > 1) {
+            daysInput.value = String(v - 1);
+            renderDays();
+          }
+        });
+        plusBtn.addEventListener('click', () => {
+          daysInput.value = String((Number(daysInput.value) || 1) + 1);
+          renderDays();
+        });
+        renderDays();
+      }
       overlay.appendChild(box);
       document.body.appendChild(overlay);
       const errorEl = box.querySelector('.modal-error');
@@ -302,6 +336,8 @@
             out[f.key] = el ? el.value.trim() : '';
           }
         }
+        const daysInput = box.querySelector('[data-key="days"]');
+        if (daysInput) out.days = Number(daysInput.value) || 1;
         return out;
       }
 
@@ -399,10 +435,19 @@
         ]
       });
     }
-    return openForm(tt('editTitle'), fields, {
+    const opts = {
       okText: tt('save'),
       validate: (v) => (v.name ? '' : tt('nameRequired'))
-    });
+    };
+    if (!isSeriesMember) {
+      const initDays = dayDiff(item.start, item.end) + 1;
+      opts.actionsLeft = '<div class="days-stepper">'
+        + '<button type="button" class="btn days-minus">−</button>'
+        + '<span class="days-value"></span>'
+        + '<button type="button" class="btn days-plus">＋</button>'
+        + '<input type="hidden" data-key="days" value="' + initDays + '"></div>';
+    }
+    return openForm(tt('editTitle'), fields, opts);
   }
 
   function confirmDialog(message) {

@@ -247,6 +247,9 @@
           item.name = result.name;
           item.notes = result.notes;
           item.color = result.color;
+          if (result.days) {
+            item.end = u.addDaysISO(item.start, result.days - 1);
+          }
           await store.putItems([item]);
         }
         const nextRecent = dialogs.recordRecentColor(result.color);

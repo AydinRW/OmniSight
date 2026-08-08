@@ -559,6 +559,12 @@
       const leftColW = modalBox && formCols[0] ? formCols[0].getBoundingClientRect().width : 0;
       const rightColW = modalBox && formCols[1] ? formCols[1].getBoundingClientRect().width : 0;
       console.log('SMOKE_COLOR_COMPACT ' + (rightColW > 0 && rightColW < leftColW ? 'ok' : 'FAIL(' + rightColW + ' vs ' + leftColW + ')'));
+      const notesTa = modalBox ? modalBox.querySelector('.form-col:first-child textarea') : null;
+      const notesTaStyle = notesTa ? getComputedStyle(notesTa) : null;
+      const notesRect = notesTa ? notesTa.getBoundingClientRect() : null;
+      const leftColRect = formCols[0] ? formCols[0].getBoundingClientRect() : null;
+      const fillsCol = notesRect && leftColRect && Math.abs(notesRect.bottom - leftColRect.bottom) < 8;
+      console.log('SMOKE_NOTES_FILL ' + (notesTaStyle && notesTaStyle.resize === 'none' && fillsCol ? 'ok' : 'FAIL(resize=' + (notesTaStyle ? notesTaStyle.resize : 'none') + ' fill=' + !!fillsCol + ')'));
       const presetSwatches = modalBox ? modalBox.querySelectorAll('.swatch.preset') : [];
       const recentSwatches = modalBox ? modalBox.querySelectorAll('.swatch.recent') : [];
       console.log('SMOKE_COLOR_PRESETS ' + (presetSwatches.length === 25 ? 'ok' : 'FAIL(' + presetSwatches.length + ')'));
@@ -614,6 +620,11 @@
       const recCols = newModal ? newModal.querySelectorAll('.form-col') : [];
       const recNotes = newModal && newModal.querySelector('.form-col:first-child textarea');
       console.log('SMOKE_RECURRING_2COL ' + (recCols.length === 2 && recNotes ? 'ok' : 'FAIL(' + recCols.length + ')'));
+      const recNotesRect = recNotes ? recNotes.getBoundingClientRect() : null;
+      const recColorWidget = newModal ? newModal.querySelector('.form-col:last-child .color-widget') : null;
+      const recColorRect = recColorWidget ? recColorWidget.getBoundingClientRect() : null;
+      const recAligned = recNotesRect && recColorRect && Math.abs(recNotesRect.bottom - recColorRect.bottom) < 20;
+      console.log('SMOKE_RECURRING_ALIGN ' + (recAligned ? 'ok' : 'FAIL(d=' + (recNotesRect && recColorRect ? Math.abs(recNotesRect.bottom - recColorRect.bottom) : 'n/a') + ')'));
       const cancelNew = newModal ? newModal.querySelector('[data-act="cancel"]') : null;
       if (cancelNew) cancelNew.click();
 

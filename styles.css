@@ -408,7 +408,6 @@ body.stamp-mode {
 }
 body.stamp-mode .bar,
 body.stamp-mode .cell { cursor: url("assets/cursor.png") 10 20, crosshair; }
-}
 .tooltip {
   position: fixed;
   z-index: 200;

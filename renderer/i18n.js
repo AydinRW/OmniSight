@@ -20,7 +20,7 @@
       menuComingSoon: '即将推出',
       menuAbout: '关于 OmniSight',
       menuHelpGuide: '使用教程',
-      aboutText: 'OmniSight 线性日历 v1.3.0\nby Aydin',
+      aboutText: 'OmniSight 线性日历 v1.4.0\nby Aydin',
       helpSections: [
         {
           title: '一、创建事项（拖拽绘制）',
@@ -60,6 +60,15 @@
             '顶部 ◀ ▶ 切换年份，各年份数据相互独立。',
             '菜单栏【设置】可一键切换中英文界面；【帮助】可随时查看本教程。',
             '颜色面板提供「最近使用」与 5 组预设色板，点击色块即可快速取色。'
+          ]
+        }
+        ,
+        {
+          title: '六、盖章模式（印台）',
+          lines: [
+            '定位：当同一套固定跨天事项需要反复出现在全年零散日期时，用它可以一次记下模板、点哪儿盖哪儿，省去逐个新建。',
+            '用法：把任意事项条拖进右上角「印台」松开，即载入模板并进入盖章模式；在日期格单击＝按模板生成一条，再单击相同的事项条＝删除它。',
+            '退出：点击印台（文字变为「退出」）即恢复常规操作；盖章生成的事项可正常编辑、改色、调天数、删除。'
           ]
         }
       ],
@@ -120,7 +129,7 @@
       menuComingSoon: 'Coming soon',
       menuAbout: 'About OmniSight',
       menuHelpGuide: 'User Guide',
-      aboutText: 'OmniSight Linear Calendar v1.3.0\nby Aydin',
+      aboutText: 'OmniSight Linear Calendar v1.4.0\nby Aydin',
       helpSections: [
         {
           title: '1. Creating Events (Drag to Draw)',
@@ -160,6 +169,15 @@
             "Use the ◀ ▶ arrows at the top to switch years; each year's data is stored independently.",
             'The "Settings" menu toggles the UI language (中文 / English); "Help" opens this guide anytime.',
             'The color panel offers "Recently Used" colors and 5 preset palettes — click any swatch to pick a color quickly.'
+          ]
+        }
+        ,
+        {
+          title: '6. Stamp Mode (Ink Pad)',
+          lines: [
+            'Purpose: place the same fixed event repeatedly at scattered dates without re-creating it each time — load a template once, then click where you want it.',
+            'Usage: drag any event bar onto the "Ink Pad" (top-right) and release to load the template and enter Stamp Mode; click a date cell to stamp one identical event, click the same bar again to delete it.',
+            'Exit: click the pad (now showing "Exit") to return to normal; stamped events can still be edited, recolored, resized, or deleted.'
           ]
         }
       ],

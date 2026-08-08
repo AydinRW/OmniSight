@@ -59,6 +59,14 @@
 
 **English**: Batch-generate recurring events by start/end date and repeat interval, with a color chosen at the same time.
 
+### 盖章模式 / Stamp Mode
+
+![盖章模式 - Stamp Mode](docs/screenshots/stamp-mode.png)
+
+**中文**：将任意单日或跨天实体事项条拖入右上角「印台」，即可载入模板并自动进入盖章模式；此后在任意日期单元格单击，就能以该格为起点一键生成与模板完全相同的事项条，再次单击与模板完全匹配的事项条则可删除。该模式专为「无规律、分散点位」的固定跨天事项重复创建而设计，弥补批量新增只能按固定间隔生成、无法灵活点状铺设日程的短板。
+
+**English**: Drag any single-day or cross-day event bar onto the "Ink Pad" in the top-right to load it as a template and automatically enter Stamp Mode. Then click any date cell to instantly stamp an identical event starting at that cell; clicking a bar that exactly matches the template again removes it. Stamp Mode is built for repeating a fixed multi-day arrangement at scattered, irregular dates — covering the gap where batch generation can only create items at a fixed interval.
+
 ## 功能特性 / Features
 
 | 功能 / Feature | 说明 / Description                                                                                                                                                                                             |
@@ -120,6 +128,22 @@
 **中文**：「新建事项」按起始日期起每隔 N 天生成一个单日事项，直到结束日期（含首尾）。生成条目与手动绘制条目外观一致，并保持系列关联，可对整条系列统一编辑或删除。
 
 **English**: "New Event" generates single-day items every N days from the start date through the end date (inclusive). Generated items look identical to manually drawn ones and stay linked as a series, allowing whole-series edits or deletion.
+
+### 盖章模式说明 / Stamp Mode
+
+**中文**：
+
+1. **载入模板**：将任意单日或跨天实体事项条拖入右上角「印台」并松开鼠标——印台会记下该事项的名称、备注、颜色与跨天天数，随即自动进入盖章模式（光标变为印章样式，印台文字变为「退出」）。新模板自动覆盖旧模板，无需手动清空。
+2. **盖章**：在任意有效日期单元格单击，即以该格为起点一键生成与模板完全一致（名称、备注、颜色、天数全部相同）的事项条；再次单击任意与模板完全匹配的事项条（无论创建先后）即可删除该条，点击其他无关事项条不会有任何反应，杜绝误删。
+3. **退出**：再次点击印台即可退出盖章模式，光标恢复默认样式，印台恢复半透明虚线初始状态；新建、编辑、拖拽、批量等常规操作全部照常。
+4. **功能定位**：专门解决无规律、分散点位的固定跨天事项重复创建繁琐的痛点，弥补批量新增无法灵活点状铺设日程的短板。盖章生成的事项为普通事项，可继续正常编辑、改色、调天数与删除。
+
+**English**:
+
+1. **Load a template**: Drag any single-day or cross-day event bar onto the "Ink Pad" (top-right) and release — the pad captures the event's name, notes, color, and day count, then automatically enters Stamp Mode (the cursor becomes a stamp icon and the pad text changes to "Exit"). A new template automatically replaces the old one.
+2. **Stamp**: Click any valid date cell to instantly create an event starting at that cell, identical to the template (same name, notes, color, and day count). Click any bar that exactly matches the template (no matter when it was created) to delete it; unrelated bars are ignored, so nothing is deleted by accident.
+3. **Exit**: Click the ink pad again to leave Stamp Mode — the cursor and pad return to their default state, and all normal operations (create, edit, drag, batch, etc.) work as usual.
+4. **Purpose**: Solves the pain of repeatedly creating the same fixed multi-day event at scattered, irregular dates, covering the gap where batch generation cannot flexibly place events point by point. Stamped events are regular events and can still be edited, recolored, resized, or deleted afterwards.
 
 ## 技术栈 / Tech Stack
 

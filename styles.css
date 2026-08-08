@@ -360,6 +360,34 @@ body {
 .days-stepper .btn { min-width: 32px; padding: 0 10px; }
 .days-value { min-width: 30px; text-align: center; font-weight: 700; color: #681414; }
 .days-stepper .btn:disabled { opacity: 0.45; cursor: default; }
+.stamp-pad {
+  min-width: 86px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1.5px dashed #681414;
+  background: rgba(156, 91, 78, 0.45);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f9f2dd;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+  flex: 0 0 auto;
+}
+.stamp-pad.active {
+  background: #9c5b4e;
+  border-style: solid;
+}
+.stamp-pad.active span { font-size: 10px; }
+body.stamp-mode {
+  cursor: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cg transform='translate(2,2)'%3E%3Crect x='0' y='4' width='20' height='20' rx='3' fill='%239c5b4e' stroke='%23f9f2dd' stroke-width='1.5'/%3E%3Crect x='9' y='0' width='2' height='6' fill='%23681414'/%3E%3Ccircle cx='10' cy='14' r='4' fill='%23f9f2dd'/%3E%3C/g%3E%3C/svg%3E") 4 4, crosshair;
+}
+body.stamp-mode .bar,
+body.stamp-mode .cell { cursor: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cg transform='translate(2,2)'%3E%3Crect x='0' y='4' width='20' height='20' rx='3' fill='%239c5b4e' stroke='%23f9f2dd' stroke-width='1.5'/%3E%3Crect x='9' y='0' width='2' height='6' fill='%23681414'/%3E%3Ccircle cx='10' cy='14' r='4' fill='%23f9f2dd'/%3E%3C/g%3E%3C/svg%3E") 4 4, crosshair;
+}
 .tooltip {
   position: fixed;
   z-index: 200;

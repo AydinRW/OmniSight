@@ -77,7 +77,8 @@
       color: /^#[0-9a-fA-F]{6}$/.test(raw.color) ? raw.color : '#3b82f6',
       start: String(raw.start),
       end: String(raw.end),
-      seriesId: raw.seriesId ? String(raw.seriesId) : null
+      seriesId: raw.seriesId ? String(raw.seriesId) : null,
+      stamped: !!raw.stamped
     };
   }
 

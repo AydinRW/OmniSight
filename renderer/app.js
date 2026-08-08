@@ -30,7 +30,8 @@
       data: { items: [], series: [] },
       drafts: [],
       moving: null,
-      batch: { active: false, ids: new Set() }
+      batch: { active: false, ids: new Set() },
+      stamp: { active: false, template: null }
     };
 
     const scrollBody = document.getElementById('scroll-body');
@@ -45,6 +46,7 @@
     const batchActions = document.getElementById('batch-actions');
     const batchDoneBtn = document.getElementById('batch-done-btn');
     const batchCancelBtn = document.getElementById('batch-cancel-btn');
+    const stampPad = document.getElementById('stamp-pad');
     const dataDirEl = document.getElementById('data-dir');
     const appTitleEl = document.getElementById('app-title');
     const statusbarHintEl = document.getElementById('statusbar-hint');
@@ -76,7 +78,27 @@
       menuBar.querySelector('[data-menu="settings"]').textContent = L.t('menuSettings');
       menuBar.querySelector('[data-menu="help"]').textContent = L.t('menuHelp');
       if (!menuDropdown.hidden) openMenu(menuDropdown.dataset.menu);
+      renderStampPad();
     }
+
+    function renderStampPad() {
+      const active = state.stamp.active;
+      document.body.classList.toggle('stamp-mode', active);
+      stampPad.classList.toggle('active', active);
+      stampPad.querySelector('span').textContent = active ? window.I18n.t('stampExitHint') : window.I18n.t('stampPad');
+      newBtn.disabled = active;
+      batchDeleteBtn.disabled = active;
+      addBtn.disabled = active || state.drafts.length === 0;
+      if (active) setBatchMode(false);
+    }
+
+    stampPad.addEventListener('click', () => {
+      if (state.stamp.active) {
+        state.stamp.active = false;
+        state.stamp.template = null;
+        renderStampPad();
+      }
+    });
 
     async function loadYear() {
       state.data = await store.loadYear(state.year);
@@ -283,6 +305,7 @@
       onDataChanged,
       onDraftsChange: updateAddBtn,
       onCommitDrafts: commitDrafts,
+      onStampChange: renderStampPad,
       onError: notifyError
     });
 
@@ -696,6 +719,45 @@
       console.log('SMOKE_HELP_GUIDE ' + (helpBody && helpBody.textContent.indexOf('拖拽') >= 0 && helpBody.textContent.indexOf('批量删除') >= 0 && helpBody.textContent.indexOf('周期事项') >= 0 ? 'ok' : 'FAIL'));
       const helpOk = helpModal ? helpModal.querySelector('[data-act="ok"]') : null;
       if (helpOk) helpOk.click();
+
+      // 盖章模式
+      const stampPadEl = document.getElementById('stamp-pad');
+      console.log('SMOKE_PAD_DEFAULT ' + (stampPadEl && stampPadEl.textContent === '印台' && getComputedStyle(stampPadEl).borderTopStyle === 'dashed' ? 'ok' : 'FAIL'));
+      const longBarStamp = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-long') === 0);
+      const lbs = longBarStamp.getBoundingClientRect();
+      const padRect = stampPadEl.getBoundingClientRect();
+      longBarStamp.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerId: 20, clientX: lbs.left + 5, clientY: lbs.top + 9 }));
+      window.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 20, clientX: padRect.left + 10, clientY: padRect.top + 10 }));
+      window.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 20, clientX: padRect.left + 10, clientY: padRect.top + 10 }));
+      const stampCursor = getComputedStyle(document.body).cursor;
+      console.log('SMOKE_STAMP_LOAD ' + (document.body.classList.contains('stamp-mode') && stampPadEl.textContent === '再次点击此处退出盖章模式' && stampCursor.indexOf('url') >= 0 ? 'ok' : 'FAIL'));
+      const stampCell = document.querySelector('.cell.valid[data-date="2026-06-01"]');
+      const scr = stampCell.getBoundingClientRect();
+      stampCell.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerId: 21, clientX: scr.left + scr.width / 2, clientY: scr.top + scr.height / 2 }));
+      stampCell.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, button: 0, pointerId: 21, clientX: scr.left + scr.width / 2, clientY: scr.top + scr.height / 2 }));
+      stampCell.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: scr.left + scr.width / 2, clientY: scr.top + scr.height / 2 }));
+      new Promise((r) => setTimeout(r, 300)).then(() => window.CalendarStore.loadYear(2026)).then((data) => {
+        const stamped = data.items.find((i) => i.stamped === true);
+        console.log('SMOKE_STAMP_CREATE ' + (stamped && stamped.start === '2026-06-01' && stamped.end === '2026-06-10' && stamped.name === 'Long Event' ? 'ok' : 'FAIL'));
+        const stampedId = stamped ? stamped.id : null;
+        const stampedBarEl = stampedId ? Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf(stampedId) === 0) : null;
+        if (stampedBarEl) {
+          const sr = stampedBarEl.getBoundingClientRect();
+          stampedBarEl.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: sr.left + 5, clientY: sr.top + 9 }));
+        }
+        const shortBarStamp = Array.from(document.querySelectorAll('.bar')).find((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-short') === 0);
+        if (shortBarStamp) {
+          const shr = shortBarStamp.getBoundingClientRect();
+          shortBarStamp.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: shr.left + 5, clientY: shr.top + 9 }));
+        }
+        stampPadEl.click();
+        return new Promise((r) => setTimeout(r, 300)).then(() => window.CalendarStore.loadYear(2026));
+      }).then((data2) => {
+        const stampedGone = !data2.items.some((i) => i.stamped === true);
+        const shortAlive = data2.items.some((i) => i.id === 'smoke-short');
+        console.log('SMOKE_STAMP_UNDO ' + (stampedGone && shortAlive ? 'ok' : 'FAIL'));
+        console.log('SMOKE_STAMP_EXIT ' + (!document.body.classList.contains('stamp-mode') && stampPadEl.textContent === '印台' ? 'ok' : 'FAIL'));
+      }).catch((err) => console.error('SMOKE_STAMP_ERR ' + (err && err.message ? err.message : String(err))));
 
       console.log('SMOKE_INTERACTION_DONE');
     } catch (err) {

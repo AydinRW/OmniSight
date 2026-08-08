@@ -23,6 +23,7 @@
     const onDraftsChange = opts.onDraftsChange || function () {};
     const onCommitDrafts = opts.onCommitDrafts || function () {};
     const onError = opts.onError || function (err) { console.error(err); };
+    const onStampChange = opts.onStampChange || function () {};
     const scrollBody = renderer.scrollBody;
 
     let drag = null;
@@ -85,6 +86,43 @@
       updateBars();
     }
 
+    function matchesStampTemplate(item) {
+      const tpl = state.stamp.template;
+      if (!item || !tpl) return false;
+      const days = u.diffDays(item.start, item.end) + 1;
+      return item.name === tpl.name
+        && (item.notes || '') === (tpl.notes || '')
+        && item.color === tpl.color
+        && days === tpl.days;
+    }
+
+    function stampAt(dateISO) {
+      const tpl = state.stamp.template;
+      if (!tpl) return;
+      const item = {
+        id: u.makeId(),
+        name: tpl.name,
+        notes: tpl.notes || '',
+        color: tpl.color,
+        start: dateISO,
+        end: u.addDaysISO(dateISO, tpl.days - 1),
+        seriesId: null,
+        stamped: true
+      };
+      store.putItems([item]).then(onDataChanged).catch(onError);
+    }
+
+    function loadStampTemplate(item) {
+      state.stamp.template = {
+        name: item.name,
+        notes: item.notes || '',
+        color: item.color,
+        days: u.diffDays(item.start, item.end) + 1
+      };
+      state.stamp.active = true;
+      onStampChange();
+    }
+
     function onPointerMove(e) {
       if (!drag) return;
       if (drag.mode === 'draw') {
@@ -113,10 +151,17 @@
       }
     }
 
-    function onPointerUp() {
+    function onPointerUp(e) {
       if (!drag) return;
       if (drag.mode === 'move') {
-        if (state.moving) {
+        const padEl = document.getElementById('stamp-pad');
+        const padRect = padEl ? padEl.getBoundingClientRect() : null;
+        const overPad = padRect && e.clientX >= padRect.left && e.clientX <= padRect.right
+          && e.clientY >= padRect.top && e.clientY <= padRect.bottom;
+        if (overPad) {
+          const item = state.data.items.find((i) => i.id === drag.itemId);
+          if (item) loadStampTemplate(item);
+        } else if (state.moving) {
           const item = state.data.items.find((i) => i.id === drag.itemId);
           const changed = item && (state.moving.newStart !== item.start || state.moving.newEnd !== item.end);
           if (item && changed) {
@@ -146,6 +191,7 @@
 
     scrollBody.addEventListener('pointerdown', (e) => {
       if (e.button !== 0) return;
+      if (state.stamp && state.stamp.active) return; // 盖章模式：禁用拖拽/绘制
       suppressClear = false;
       const barEl = e.target.closest('.bar');
       if (barEl) {
@@ -165,6 +211,19 @@
         suppressClear = false;
         return;
       }
+      if (state.stamp && state.stamp.active) {
+        const barEl = e.target.closest('.bar');
+        if (barEl) {
+          const bar = renderer.barData.get(barEl.dataset.barKey);
+          if (bar && bar.item && bar.item.stamped && matchesStampTemplate(bar.item)) {
+            store.deleteItems([bar.item.id]).then(onDataChanged).catch(onError);
+          }
+          return;
+        }
+        const hit = renderer.pointToCell(e.clientX, e.clientY);
+        if (hit && hit.valid) stampAt(hit.dateISO);
+        return;
+      }
       if (state.batch && state.batch.active) {
         const barEl = e.target.closest('.bar');
         if (barEl) {
@@ -181,6 +240,7 @@
     });
 
     scrollBody.addEventListener('dblclick', (e) => {
+      if (state.stamp && state.stamp.active) return;
       if (state.batch && state.batch.active) return;
       const barEl = e.target.closest('.bar');
       if (!barEl) return;
@@ -195,6 +255,7 @@
     });
 
     scrollBody.addEventListener('contextmenu', (e) => {
+      if (state.stamp && state.stamp.active) return;
       if (state.batch && state.batch.active) return;
       const barEl = e.target.closest('.bar');
       if (!barEl) return;

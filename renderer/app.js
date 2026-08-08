@@ -381,7 +381,9 @@
         + ' hasHScroll=' + (sb.scrollWidth > sb.clientWidth));
       console.log('SMOKE_LAYOUT_TOPBAR ' + (document.getElementById('sidebar') === null && document.querySelector('#topbar #add-btn') && document.querySelector('#topbar #new-item-btn') ? 'ok' : 'FAIL'));
       const repoLink = document.querySelector('#scroll-body .repo-footer a');
-      console.log('SMOKE_REPO_FOOTER ' + (repoLink && repoLink.getAttribute('href') === 'https://github.com/AydinRW/OmniSight-Calendar' && sb.lastElementChild && sb.lastElementChild.classList.contains('repo-footer') ? 'ok' : 'FAIL'));
+      const repoFooterEl = document.querySelector('#scroll-body .repo-footer');
+      const footerPad = repoFooterEl ? parseFloat(getComputedStyle(repoFooterEl).paddingTop) : 0;
+      console.log('SMOKE_REPO_FOOTER ' + (repoLink && repoLink.getAttribute('href') === 'https://github.com/AydinRW/OmniSight-Calendar' && repoLink.textContent === 'OmniSight Calendar' && sb.lastElementChild && sb.lastElementChild.classList.contains('repo-footer') && footerPad >= 80 ? 'ok' : 'FAIL(text=' + (repoLink ? repoLink.textContent : 'none') + ' pad=' + footerPad + ')'));
       const hcStyle = getComputedStyle(document.querySelector('.header-cell'));
       const mlStyle = getComputedStyle(document.querySelector('.month-label'));
       const bg = 'rgb(249, 242, 221)'; // #f9f2dd 页面底色

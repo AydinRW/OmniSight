@@ -108,54 +108,65 @@
       overlay.className = 'modal-overlay';
       const box = document.createElement('div');
       box.className = 'modal-box';
-      let html = '<div class="modal-title">' + esc(title) + '</div><div class="modal-body">';
-      for (const f of fields) {
-        html += '<div class="field"><span class="field-label">' + esc(f.label) + (f.required ? ' <em>*</em>' : '') + '</span>';
+      const fullFields = fields.filter((f) => !f.col);
+      const leftFields = fields.filter((f) => f.col === 'left');
+      const rightFields = fields.filter((f) => f.col === 'right');
+      function fieldHtml(f) {
+        let h = '<div class="field"><span class="field-label">' + esc(f.label) + (f.required ? ' <em>*</em>' : '') + '</span>';
         if (f.type === 'textarea') {
-          html += '<textarea data-key="' + f.key + '" rows="3">' + esc(f.value || '') + '</textarea>';
+          h += '<textarea data-key="' + f.key + '" rows="3">' + esc(f.value || '') + '</textarea>';
         } else if (f.type === 'radio') {
-          html += '<span class="radio-group">';
+          h += '<span class="radio-group">';
           const def = f.value != null ? f.value : (f.options[0] || {}).value;
           for (const oo of f.options) {
             const checked = String(oo.value) === String(def) ? ' checked' : '';
-            html += '<label class="radio"><input type="radio" name="' + f.key + '" value="' + esc(oo.value) + '"' + checked + '>' + esc(oo.label) + '</label>';
+            h += '<label class="radio"><input type="radio" name="' + f.key + '" value="' + esc(oo.value) + '"' + checked + '>' + esc(oo.label) + '</label>';
           }
-          html += '</span>';
+          h += '</span>';
         } else if (f.type === 'colors') {
           const cur = f.value != null ? f.value : DEFAULT_COLOR;
-          html += '<div class="color-widget">';
-          html += '<button type="button" class="color-toggle" style="background:' + esc(cur) + '" title="选择颜色"></button>';
-          html += '<input type="hidden" data-key="' + f.key + '" value="' + esc(cur) + '">';
+          h += '<div class="color-widget">';
+          h += '<button type="button" class="color-toggle" style="background:' + esc(cur) + '" title="' + esc(tt('pickColor')) + '"></button>';
+          h += '<input type="hidden" data-key="' + f.key + '" value="' + esc(cur) + '">';
           const recent = getRecentColors();
           if (recent.length) {
-            html += '<div class="color-recent-label">' + esc(tt('recentLabel')) + '</div><div class="color-swatches">';
+            h += '<div class="color-recent-label">' + esc(tt('recentLabel')) + '</div><div class="color-swatches">';
             for (const c of recent) {
-              html += '<button type="button" class="swatch recent" data-color="' + esc(c) + '" style="background:' + esc(c) + '" title="' + esc(c) + '"></button>';
+              h += '<button type="button" class="swatch recent" data-color="' + esc(c) + '" style="background:' + esc(c) + '" title="' + esc(c) + '"></button>';
             }
-            html += '</div>';
+            h += '</div>';
           }
           for (const group of PRESET_GROUPS) {
-            html += '<div class="color-swatches">';
+            h += '<div class="color-swatches">';
             for (const c of group) {
-              html += '<button type="button" class="swatch preset" data-color="' + esc(c) + '" style="background:' + esc(c) + '" title="' + esc(c) + '"></button>';
+              h += '<button type="button" class="swatch preset" data-color="' + esc(c) + '" style="background:' + esc(c) + '" title="' + esc(c) + '"></button>';
             }
-            html += '</div>';
+            h += '</div>';
           }
-          html += '<div class="color-panel" hidden>'
+          h += '<div class="color-panel" hidden>'
             + '<div class="cp-sv"><div class="cp-cursor"></div></div>'
             + '<input type="range" class="cp-hue" min="0" max="360" step="1" value="0">'
             + '<div class="cp-foot"><input type="text" class="cp-hex" maxlength="7" value="' + esc(cur) + '">'
-            + '<button type="button" class="cp-close btn">确定</button></div>'
+            + '<button type="button" class="cp-close btn">' + esc(tt('ok')) + '</button></div>'
             + '</div>';
-          html += '</div>';
+          h += '</div>';
         } else {
-          html += '<input type="' + f.type + '" data-key="' + f.key + '" value="' + esc(f.value != null ? f.value : '') + '"'
+          h += '<input type="' + f.type + '" data-key="' + f.key + '" value="' + esc(f.value != null ? f.value : '') + '"'
             + (f.required ? ' required' : '')
             + (f.min != null ? ' min="' + f.min + '"' : '')
             + (f.max != null ? ' max="' + f.max + '"' : '')
             + ' placeholder="' + esc(f.placeholder || '') + '">';
         }
-        html += '</div>';
+        h += '</div>';
+        return h;
+      }
+      let html = '<div class="modal-title">' + esc(title) + '</div><div class="modal-body">';
+      for (const f of fullFields) html += fieldHtml(f);
+      if (leftFields.length || rightFields.length) {
+        html += '<div class="form-cols">'
+          + '<div class="form-col">' + leftFields.map(fieldHtml).join('') + '</div>'
+          + '<div class="form-col">' + rightFields.map(fieldHtml).join('') + '</div>'
+          + '</div>';
       }
       html += '</div><p class="modal-error" hidden></p><div class="modal-actions">'
         + '<button type="button" class="btn" data-act="cancel">' + esc(cancelText) + '</button>'
@@ -340,8 +351,8 @@
   function openAddDialog(draftCount) {
     return openForm(tt('addTitle', { n: draftCount }), [
       { key: 'name', label: tt('fieldName'), type: 'text', required: true, placeholder: tt('namePlaceholderAdd') },
-      { key: 'notes', label: tt('fieldNotes'), type: 'textarea', value: '' },
-      { key: 'color', label: tt('fieldColor'), type: 'colors', value: DEFAULT_COLOR }
+      { key: 'notes', label: tt('fieldNotes'), type: 'textarea', value: '', col: 'left' },
+      { key: 'color', label: tt('fieldColor'), type: 'colors', value: DEFAULT_COLOR, col: 'right' }
     ], {
       okText: tt('confirmAdd'),
       validate: (v) => (v.name ? '' : tt('nameRequired'))
@@ -352,10 +363,10 @@
     const d = defaults || {};
     return openForm(tt('newItemTitle'), [
       { key: 'name', label: tt('fieldName'), type: 'text', required: true, value: d.name || '', placeholder: tt('namePlaceholderNew') },
-      { key: 'start', label: tt('fieldStart'), type: 'date', required: true, value: d.start || '' },
-      { key: 'end', label: tt('fieldEnd'), type: 'date', required: true, value: d.end || '' },
-      { key: 'interval', label: tt('fieldInterval'), type: 'number', required: true, value: d.interval != null ? d.interval : 1, min: 1, placeholder: 'N' },
-      { key: 'color', label: tt('fieldColor'), type: 'colors', value: d.color || DEFAULT_COLOR }
+      { key: 'start', label: tt('fieldStart'), type: 'date', required: true, value: d.start || '', col: 'left' },
+      { key: 'end', label: tt('fieldEnd'), type: 'date', required: true, value: d.end || '', col: 'left' },
+      { key: 'interval', label: tt('fieldInterval'), type: 'number', required: true, value: d.interval != null ? d.interval : 1, min: 1, placeholder: 'N', col: 'left' },
+      { key: 'color', label: tt('fieldColor'), type: 'colors', value: d.color || DEFAULT_COLOR, col: 'right' }
     ], {
       okText: tt('generate'),
       validate: (v) => {
@@ -371,13 +382,14 @@
   function openEditDialog(item, isSeriesMember) {
     const fields = [
       { key: 'name', label: tt('fieldName'), type: 'text', required: true, value: item.name },
-      { key: 'notes', label: tt('fieldNotes'), type: 'textarea', value: item.notes || '' },
-      { key: 'color', label: tt('fieldColor'), type: 'colors', value: item.color || DEFAULT_COLOR }
+      { key: 'notes', label: tt('fieldNotes'), type: 'textarea', value: item.notes || '', col: 'left' },
+      { key: 'color', label: tt('fieldColor'), type: 'colors', value: item.color || DEFAULT_COLOR, col: 'right' }
     ];
     if (isSeriesMember) {
       fields.push({
         key: 'scope',
         label: tt('scope'),
+        col: 'left',
         type: 'radio',
         value: 'single',
         options: [

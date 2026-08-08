@@ -552,6 +552,10 @@
       const modalStyle = modalBox ? getComputedStyle(modalBox) : null;
       console.log('SMOKE_DBLCLICK_DRAFT_DIALOG ' + (modal && modal.textContent.indexOf('添加事项') >= 0 && modalStyle
         && modalStyle.backgroundColor === 'rgb(249, 242, 221)' && modalStyle.fontFamily.indexOf('YaHei') >= 0 ? 'ok' : 'FAIL(no-modal)'));
+      const formCols = modalBox ? modalBox.querySelectorAll('.form-col') : [];
+      const colorInRightCol = modalBox && modalBox.querySelector('.form-col:last-child .color-widget');
+      const notesInLeftCol = modalBox && modalBox.querySelector('.form-col:first-child textarea');
+      console.log('SMOKE_DIALOG_2COL ' + (formCols.length === 2 && colorInRightCol && notesInLeftCol ? 'ok' : 'FAIL(' + formCols.length + ')'));
       const presetSwatches = modalBox ? modalBox.querySelectorAll('.swatch.preset') : [];
       const recentSwatches = modalBox ? modalBox.querySelectorAll('.swatch.recent') : [];
       console.log('SMOKE_COLOR_PRESETS ' + (presetSwatches.length === 25 ? 'ok' : 'FAIL(' + presetSwatches.length + ')'));

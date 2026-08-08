@@ -240,7 +240,7 @@
       const series = {
         id: seriesId,
         name: res.name,
-        notes: '',
+        notes: res.notes || '',
         color: res.color,
         start: res.start,
         end: res.end,
@@ -249,7 +249,7 @@
       const items = dates.map((d) => ({
         id: u.makeId(),
         name: res.name,
-        notes: '',
+        notes: res.notes || '',
         color: res.color,
         start: d,
         end: d,
@@ -556,6 +556,9 @@
       const colorInRightCol = modalBox && modalBox.querySelector('.form-col:last-child .color-widget');
       const notesInLeftCol = modalBox && modalBox.querySelector('.form-col:first-child textarea');
       console.log('SMOKE_DIALOG_2COL ' + (formCols.length === 2 && colorInRightCol && notesInLeftCol ? 'ok' : 'FAIL(' + formCols.length + ')'));
+      const leftColW = modalBox && formCols[0] ? formCols[0].getBoundingClientRect().width : 0;
+      const rightColW = modalBox && formCols[1] ? formCols[1].getBoundingClientRect().width : 0;
+      console.log('SMOKE_COLOR_COMPACT ' + (rightColW > 0 && rightColW < leftColW ? 'ok' : 'FAIL(' + rightColW + ' vs ' + leftColW + ')'));
       const presetSwatches = modalBox ? modalBox.querySelectorAll('.swatch.preset') : [];
       const recentSwatches = modalBox ? modalBox.querySelectorAll('.swatch.recent') : [];
       console.log('SMOKE_COLOR_PRESETS ' + (presetSwatches.length === 25 ? 'ok' : 'FAIL(' + presetSwatches.length + ')'));
@@ -608,6 +611,9 @@
       const newModal = document.querySelector('.modal-overlay');
       const newModalColor = newModal ? newModal.querySelector('.color-widget') : null;
       console.log('SMOKE_NEWITEM_COLOR ' + (newModalColor ? 'ok' : 'FAIL'));
+      const recCols = newModal ? newModal.querySelectorAll('.form-col') : [];
+      const recNotes = newModal && newModal.querySelector('.form-col:first-child textarea');
+      console.log('SMOKE_RECURRING_2COL ' + (recCols.length === 2 && recNotes ? 'ok' : 'FAIL(' + recCols.length + ')'));
       const cancelNew = newModal ? newModal.querySelector('[data-act="cancel"]') : null;
       if (cancelNew) cancelNew.click();
 

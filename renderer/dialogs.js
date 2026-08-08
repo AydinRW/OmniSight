@@ -366,6 +366,7 @@
       { key: 'start', label: tt('fieldStart'), type: 'date', required: true, value: d.start || '', col: 'left' },
       { key: 'end', label: tt('fieldEnd'), type: 'date', required: true, value: d.end || '', col: 'left' },
       { key: 'interval', label: tt('fieldInterval'), type: 'number', required: true, value: d.interval != null ? d.interval : 1, min: 1, placeholder: 'N', col: 'left' },
+      { key: 'notes', label: tt('fieldNotes'), type: 'textarea', value: '', col: 'left' },
       { key: 'color', label: tt('fieldColor'), type: 'colors', value: d.color || DEFAULT_COLOR, col: 'right' }
     ], {
       okText: tt('generate'),

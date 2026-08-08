@@ -227,13 +227,15 @@ body {
 .modal-box {
   background: #f9f2dd;
   border-radius: 10px;
-  width: 580px;
+  width: auto;
+  min-width: 460px;
   max-width: calc(100vw - 40px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   padding: 18px;
 }
 .form-cols { display: flex; gap: 14px; align-items: stretch; }
-.form-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.form-col { flex: 0 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.form-col:first-child { flex: 0 0 265px; }
 .form-col .field { margin-bottom: 0; }
 .form-col textarea { flex: 1; min-height: 120px; resize: none; }
 .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
@@ -273,7 +275,7 @@ body {
   left: 0;
   top: 40px;
   z-index: 30;
-  width: 220px;
+  width: 100%;
   background: #f9f2dd;
   border: 1px solid #e5dcc4;
   border-radius: 8px;
@@ -286,7 +288,7 @@ body {
 .color-panel[hidden] { display: none; }
 .cp-sv {
   position: relative;
-  height: 120px;
+  height: 100px;
   border-radius: 6px;
   cursor: crosshair;
   border: 1px solid #e5dcc4;
@@ -315,10 +317,10 @@ body {
 }
 .color-widget { position: relative; }
 .color-recent-label { font-size: 11px; color: #681414; opacity: 0.75; }
-.color-swatches { display: flex; gap: 6px; flex-wrap: wrap; }
+.color-swatches { display: flex; gap: 5px; flex-wrap: wrap; }
 .swatch {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 6px;
   border: 2px solid transparent;
   cursor: pointer;

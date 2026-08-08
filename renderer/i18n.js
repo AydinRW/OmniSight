@@ -20,7 +20,7 @@
       menuComingSoon: '即将推出',
       menuAbout: '关于 OmniSight',
       menuHelpGuide: '使用教程',
-      aboutText: 'OmniSight 线性日历 v1.0.0\nby Aydin',
+      aboutText: 'OmniSight 线性日历 v1.3.0\nby Aydin',
       helpSections: [
         {
           title: '一、创建事项（拖拽绘制）',
@@ -118,7 +118,7 @@
       menuComingSoon: 'Coming soon',
       menuAbout: 'About OmniSight',
       menuHelpGuide: 'User Guide',
-      aboutText: 'OmniSight Linear Calendar v1.0.0\nby Aydin',
+      aboutText: 'OmniSight Linear Calendar v1.3.0\nby Aydin',
       helpSections: [
         {
           title: '1. Creating Events (Drag to Draw)',

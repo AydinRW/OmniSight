@@ -1,7 +1,7 @@
 {
   "name": "omnisight",
   "productName": "OmniSight",
-  "version": "1.0.0",
+  "version": "1.3.0",
   "description": "OmniSight：Windows 线性年历桌面应用，一年一页、跨天事项、周期事项、本地存储",
   "main": "main.js",
   "scripts": {

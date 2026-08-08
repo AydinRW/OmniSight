@@ -111,6 +111,23 @@ body {
 }
 .statusbar-hint { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .data-dir { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 45%; }
+.repo-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0 32px;
+}
+.repo-footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #681414;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.85;
+}
+.repo-footer a:hover { opacity: 1; text-decoration: underline; }
 .grid-header {
   position: sticky;
   top: 0;

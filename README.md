@@ -25,7 +25,7 @@
 
 ### 全年总览视图 / Year Overview
 
-![全年总览视图 - Year Overview](docs/screenshots/year-overview.png)
+![全年总览视图 - Year Overview](docs/screenshots/year-overview-en.png)
 
 **中文**：12 个月纵向排列、横向固定 37 列网格；事项以彩色横条覆盖对应日期区间，全年计划一目了然。
 
@@ -41,19 +41,17 @@
 
 **English**: A clean grid of a brand-new year — click any date cell to start planning.
 
-### 添加事项弹窗 / Add-Event Dialog
+### 添加与编辑事项弹窗 / Add-Event & Edit-Event Dialog
 
-![添加事项弹窗 - Add-Event Dialog](docs/screenshots/add-dialog-zh.png)
+![添加事项弹窗 - Add-Event Dialog](docs/screenshots/add-event-en.png)
 
-![添加事项弹窗 - Add-Event Dialog](docs/screenshots/add-dialog-en.png)
+![编辑事项弹窗 - Edit-Event Dialog](docs/screenshots/edit-event-en.png)
 
-**中文**：双击草稿条或点击「添加」弹出表单，填写名称、备注并选择颜色；颜色面板包含「最近使用」与 5 组预设色板。
+**中文**：双击草稿条或点击「添加」弹出表单，填写名称、备注并选择颜色；颜色面板包含「最近使用」与 5 组预设色板。在编辑页面可直接更改事项条长度。
 
-**English**: Double-click a draft bar or press "Add" to open the form — fill in the name, notes, and pick a color; the picker includes recently used colors and 5 preset palettes.
+**English**: Double-click a draft bar or press "Add" to open the form — fill in the name, notes, and pick a color; the picker includes recently used colors and 5 preset palettes.You can directly modify the length of the event bar on the edit page.
 
 ### 新建周期事项弹窗 / Recurring-Event Dialog
-
-![新建周期事项弹窗 - Recurring-Event Dialog](docs/screenshots/recurring-dialog-zh.png)
 
 ![新建周期事项弹窗 - Recurring-Event Dialog](docs/screenshots/recurring-dialog-en.png)
 
@@ -63,31 +61,33 @@
 
 ## 功能特性 / Features
 
-| 功能 / Feature | 说明 / Description |
-| --- | --- |
-| 全年单页视图 | 12 个月纵向排列、固定 37 列网格，垂直滚动，不分页。Full-year single-page view with a fixed 37-column grid. |
-| 年份切换 | 上一年/下一年按钮；数据按年份分文件夹隔离。Year switching with per-year isolated data. |
-| 拖拽绘制草稿 | 单击或拖拽生成虚线草稿条；Ctrl+单击多选；点击空白/Esc 作废；双击草稿条直接弹出添加。Dashed draft bars via click/drag; Ctrl+click multi-select; Esc or click-elsewhere to discard; double-click a draft to add. |
-| 跨天连续横条 | 同月跨格连续、跨月分段延续；一条事项是一个整体对象，可整体编辑/移动/删除。Continuous cross-day/month bars as single objects. |
-| 泳道堆叠 | 同一日期多条事项自动分泳道堆叠，互不遮挡；不重叠事项共享同一泳道。Lane-based stacking without overlap. |
-| 周期批量事项 | 按名称、起止日期、间隔天数批量生成；保留系列关联，可整体编辑/删除。Recurring batch events with series linkage. |
-| 悬浮预览 | 悬停横条显示完整名称、备注与日期。Hover preview shows full name, notes, and dates. |
-| 编辑与删除 | 双击编辑文字/颜色；右键删除单条或整条；拖动整条移动。Double-click to edit; right-click to delete; drag to move. |
-| 批量删除 | 顶部「批量删除」进入多选模式，单击多选横条，完成/取消。Batch-delete mode with multi-select. |
-| 颜色系统 | 自绘光谱面板 + 最近使用 5 色 + 5 组预设色板，在添加/新建/编辑弹窗统一可用。Custom spectrum picker, recent colors, and 5 preset palettes. |
-| 本地存储 | JSON 文件按年份保存，重启不丢失。Local JSON storage per year; data survives restarts. |
+| 功能 / Feature | 说明 / Description                                                                                                                                                                                             |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 全年单页视图   | 12 个月纵向排列、固定 37 列网格，垂直滚动，不分页。Full-year single-page view with a fixed 37-column grid.                                                                                                     |
+| 年份切换       | 上一年/下一年按钮；数据按年份分文件夹隔离。Year switching with per-year isolated data.                                                                                                                         |
+| 拖拽绘制草稿   | 单击或拖拽生成虚线草稿条；Ctrl+单击多选；点击空白/Esc 作废；双击草稿条直接弹出添加。Dashed draft bars via click/drag; Ctrl+click multi-select; Esc or click-elsewhere to discard; double-click a draft to add. |
+| 跨天连续横条   | 同月跨格连续、跨月分段延续；一条事项是一个整体对象，可整体编辑/移动/删除。Continuous cross-day/month bars as single objects.                                                                                   |
+| 泳道堆叠       | 同一日期多条事项自动分泳道堆叠，互不遮挡；不重叠事项共享同一泳道。Lane-based stacking without overlap.                                                                                                         |
+| 周期批量事项   | 按名称、起止日期、间隔天数批量生成；保留系列关联，可整体编辑/删除。Recurring batch events with series linkage.                                                                                                 |
+| 悬浮预览       | 悬停横条显示完整名称、备注与日期。Hover preview shows full name, notes, and dates.                                                                                                                             |
+| 编辑与删除     | 双击编辑文字/颜色；右键删除单条或整条；拖动整条移动。Double-click to edit; right-click to delete; drag to move.                                                                                                |
+| 批量删除       | 顶部「批量删除」进入多选模式，单击多选横条，完成/取消。Batch-delete mode with multi-select.                                                                                                                    |
+| 颜色系统       | 自绘光谱面板 + 最近使用 5 色 + 5 组预设色板，在添加/新建/编辑弹窗统一可用。Custom spectrum picker, recent colors, and 5 preset palettes.                                                                       |
+| 本地存储       | JSON 文件按年份保存，重启不丢失。Local JSON storage per year; data survives restarts.                                                                                                                          |
 
 ## 界面与操作 / Usage
 
 ### 顶部工具栏 / Top Bar
 
 **中文**：
+
 - **◀ / ▶**：切换上一年 / 下一年
 - **添加**：把当前虚线草稿正式提交为事项（弹出名称/备注/颜色表单；双击草稿条效果相同）
 - **新建事项**：批量生成周期事项（名称、起始年月日、结束年月日、重复间隔天数）
 - **批量删除**：进入多选模式，此时按钮切换为「完成 / 取消」
 
 **English**:
+
 - **◀ / ▶**: Switch to the previous / next year
 - **添加 (Add)**: Commit the current dashed drafts as real events (opens a name/notes/color form; double-clicking a draft bar does the same)
 - **新建事项 (New Event)**: Generate recurring events in batches (name, start date, end date, repeat interval in days)
@@ -96,12 +96,14 @@
 ### 创建事项 / Creating Events
 
 **中文**：
+
 1. 单击某个有效日期格 → 生成该日的单日虚线草稿条；横向拖拽 → 生成跨天草稿条（可跨月）
 2. 按住 `Ctrl` 多次单击 → 追加多条独立单日草稿
 3. 点击页面空白处或按 `Esc` → 草稿全部作废
 4. 点击「添加」或双击草稿条 → 填写名称、备注、颜色并确认 → 草稿转为实体横条
 
 **English**:
+
 1. Click a valid date cell to create a single-day dashed draft; drag horizontally to create a cross-day draft (months can be crossed)
 2. Hold `Ctrl` and click multiple cells to append several independent single-day drafts
 3. Click blank space or press `Esc` to discard all drafts
@@ -128,12 +130,14 @@
 ## 安装与运行 / Installation & Running
 
 **中文**：
+
 1. 克隆仓库到本地
 2. 确保已安装 Node.js
 3. 运行 `npm install` 安装依赖
 4. `npm start` 启动开发版；`npm run build` 打包便携版 exe（产物在 `dist/`）
 
 **English**:
+
 1. Clone the repository
 2. Make sure Node.js is installed
 3. Run `npm install` to install dependencies

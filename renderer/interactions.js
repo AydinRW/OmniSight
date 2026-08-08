@@ -72,7 +72,8 @@
         anchorDate: anchor.dateISO,
         started: false,
         startX: e.clientX,
-        startY: e.clientY
+        startY: e.clientY,
+        lastMoving: null
       };
     }
 
@@ -146,7 +147,7 @@
         if (item) {
           mini.style.background = item.color;
           mini.style.color = contrastColor(item.color);
-          mini.textContent = item.name || '';
+          mini.textContent = '…';
           mini.hidden = false;
         }
       } else {
@@ -176,14 +177,22 @@
         const overPad = padRect && e.clientX >= padRect.left && e.clientX <= padRect.right
           && e.clientY >= padRect.top && e.clientY <= padRect.bottom;
         setPadOver(overPad);
-        if (overPad) return; // 移入印台：保持移动预览不变，仅切换印台悬停态
+        if (overPad) {
+          // 移入印台：日历内不显示悬浮虚影（原条在拖拽期间整体隐藏），预览仅由印台展示
+          const mv = drag.lastMoving || { newStart: drag.origStart, newEnd: drag.origEnd };
+          state.moving = { itemId: drag.itemId, newStart: mv.newStart, newEnd: mv.newEnd, hidden: true };
+          updateBars();
+          return;
+        }
         const hit = renderer.pointToCell(e.clientX, e.clientY);
         if (!hit || !hit.valid) return;
         const delta = u.diffDays(drag.anchorDate, hit.dateISO);
+        drag.lastMoving = { newStart: u.addDaysISO(drag.origStart, delta), newEnd: u.addDaysISO(drag.origEnd, delta) };
         state.moving = {
           itemId: drag.itemId,
-          newStart: u.addDaysISO(drag.origStart, delta),
-          newEnd: u.addDaysISO(drag.origEnd, delta)
+          newStart: drag.lastMoving.newStart,
+          newEnd: drag.lastMoving.newEnd,
+          hidden: false
         };
         updateBars();
       }

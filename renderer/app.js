@@ -745,12 +745,14 @@
       longBarStamp.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerId: 20, clientX: lbs.left + 5, clientY: lbs.top + 9 }));
       window.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 20, clientX: padRect.left + 10, clientY: padRect.top + 10 }));
       const overState = stampPadEl.classList.contains('over') && !stampPadEl.querySelector('.stamp-mini').hidden;
+      const ghostGone = !Array.from(document.querySelectorAll('.bar')).some((b) => b.dataset.barKey && b.dataset.barKey.indexOf('smoke-long') === 0);
+      const miniText = stampPadEl.querySelector('.stamp-mini').textContent;
       const mr1b = mar1.getBoundingClientRect();
       window.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 20, clientX: mr1b.left + mr1b.width / 2, clientY: mr1b.top + mr1b.height / 2 }));
       const outState = !stampPadEl.classList.contains('over');
       window.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 20, clientX: padRect.left + 10, clientY: padRect.top + 10 }));
       window.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 20, clientX: padRect.left + 10, clientY: padRect.top + 10 }));
-      console.log('SMOKE_STAMP_OVER ' + (overState && outState ? 'ok' : 'FAIL(over=' + overState + ' out=' + outState + ')'));
+      console.log('SMOKE_STAMP_OVER ' + (overState && outState && ghostGone && miniText === '…' ? 'ok' : 'FAIL(over=' + overState + ' out=' + outState + ' ghost=' + ghostGone + ' mini=' + miniText + ')'));
       const stampCursor = getComputedStyle(document.body).cursor;
       console.log('SMOKE_STAMP_LOAD ' + (document.body.classList.contains('stamp-mode') && stampPadEl.textContent === '再次点击此处退出盖章模式' && stampCursor.indexOf('url') >= 0 ? 'ok' : 'FAIL'));
       const stampCell = document.querySelector('.cell.valid[data-date="2026-06-01"]');

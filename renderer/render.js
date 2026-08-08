@@ -194,6 +194,7 @@
       if (moving) excluded.add(moving.itemId);
       for (const it of items) {
         if (excluded.has(it.id)) {
+          if (moving.hidden) continue; // 拖入印台期间：日历内不保留悬浮预览
           bars.push({
             id: it.id,
             start: moving.newStart,

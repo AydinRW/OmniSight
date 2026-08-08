@@ -408,12 +408,13 @@ body {
   font-size: 8px;
   line-height: 18px;
   padding: 0 3px;
+  text-align: center;
 }
 body.stamp-mode {
-  cursor: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Crect x='10.5' y='1.5' width='3' height='6.5' rx='1.2' fill='%23681414'/%3E%3Crect x='3.5' y='8' width='17' height='10' rx='2.5' fill='%239c5b4e' stroke='%23f9f2dd' stroke-width='1.2'/%3E%3Crect x='6.5' y='17.5' width='11' height='2' rx='1' fill='%23f9f2dd'/%3E%3C/svg%3E") 12 12, crosshair;
+  cursor: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M8.6 7.6 L8.6 5.4 A3.4 3.4 0 0 1 15.4 5.4 L15.4 7.6 Z' fill='none' stroke='%23681414' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='5' y='9.8' width='14' height='4' rx='2' fill='none' stroke='%23681414' stroke-width='1.8'/%3E%3Cline x1='7' y1='16' x2='17' y2='16' stroke='%23681414' stroke-width='1.8' stroke-linecap='round'/%3E%3Cline x1='7' y1='18.2' x2='17' y2='18.2' stroke='%23681414' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") 12 18, crosshair;
 }
 body.stamp-mode .bar,
-body.stamp-mode .cell { cursor: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Crect x='10.5' y='1.5' width='3' height='6.5' rx='1.2' fill='%23681414'/%3E%3Crect x='3.5' y='8' width='17' height='10' rx='2.5' fill='%239c5b4e' stroke='%23f9f2dd' stroke-width='1.2'/%3E%3Crect x='6.5' y='17.5' width='11' height='2' rx='1' fill='%23f9f2dd'/%3E%3C/svg%3E") 12 12, crosshair;
+body.stamp-mode .cell { cursor: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M8.6 7.6 L8.6 5.4 A3.4 3.4 0 0 1 15.4 5.4 L15.4 7.6 Z' fill='none' stroke='%23681414' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='5' y='9.8' width='14' height='4' rx='2' fill='none' stroke='%23681414' stroke-width='1.8'/%3E%3Cline x1='7' y1='16' x2='17' y2='16' stroke='%23681414' stroke-width='1.8' stroke-linecap='round'/%3E%3Cline x1='7' y1='18.2' x2='17' y2='18.2' stroke='%23681414' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") 12 18, crosshair;
 }
 .tooltip {
   position: fixed;
